@@ -5,15 +5,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function WidgetVideoDestaque({ currentUser, isAdmin }) {
   const [videoUrl, setVideoUrl] = useState('');
-  const [videoId, setVideoId] = useState('');
+  const [videoData, setVideoData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editUrl, setEditUrl] = useState('');
 
-  const getYoutubeId = (url) => {
+  const parseVideoUrl = (url) => {
     if (!url) return null;
+    if (url.match(/\.mp4(\?|$)/i)) {
+      return { type: 'mp4', url };
+    }
     const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
-    return match ? match[1] : null;
+    return match ? { type: 'youtube', id: match[1] } : null;
   };
 
   useEffect(() => {
@@ -55,7 +58,7 @@ export default function WidgetVideoDestaque({ currentUser, isAdmin }) {
         if (urlMatch) {
           const url = urlMatch[0];
           setVideoUrl(url);
-          setVideoId(getYoutubeId(url));
+          setVideoData(parseVideoUrl(url));
         }
       }
     } catch (e) {
@@ -76,7 +79,7 @@ export default function WidgetVideoDestaque({ currentUser, isAdmin }) {
       });
       
       setVideoUrl(editUrl);
-      setVideoId(getYoutubeId(editUrl));
+      setVideoData(parseVideoUrl(editUrl));
       setIsEditing(false);
       setEditUrl('');
     } catch (e) {
@@ -88,7 +91,7 @@ export default function WidgetVideoDestaque({ currentUser, isAdmin }) {
   if (loading) return null;
   
   // Se não tem vídeo e não é admin, não mostra nada
-  if (!videoId && !isAdmin) return null;
+  if (!videoData && !isAdmin) return null;
 
   return (
     <motion.div 
@@ -146,15 +149,23 @@ export default function WidgetVideoDestaque({ currentUser, isAdmin }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {videoId ? (
+            {videoData ? (
               <div className="relative aspect-video w-full rounded-lg md:rounded-xl overflow-hidden shadow-inner bg-black">
-                <iframe 
-                  src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`}
-                  title="Vídeo em Destaque"
-                  className="absolute top-0 left-0 w-full h-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
+                {videoData.type === 'youtube' ? (
+                  <iframe 
+                    src={`https://www.youtube-nocookie.com/embed/${videoData.id}?rel=0&modestbranding=1`}
+                    title="Vídeo em Destaque"
+                    className="absolute top-0 left-0 w-full h-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                ) : (
+                  <video 
+                    src={videoData.url}
+                    controls
+                    className="absolute top-0 left-0 w-full h-full object-contain"
+                  />
+                )}
               </div>
             ) : (
               <div className="p-8 text-center border-2 border-dashed border-slate-700/50 rounded-xl m-2 bg-slate-900/30">
