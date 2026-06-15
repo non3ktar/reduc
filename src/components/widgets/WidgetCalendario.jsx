@@ -80,12 +80,12 @@ export default function WidgetCalendario({ currentUser, isAdmin }) {
       <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
       
       <div className="flex items-center justify-between mb-4 relative z-10">
-        <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-          <Calendar size={16} className="text-orange-600" />
+        <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+          <Calendar size={16} className="text-orange-400" />
           Calendário Escolar
         </h3>
         {isAdmin && (
-          <button onClick={() => setShowAddForm(!showAddForm)} className="text-orange-600 hover:text-orange-500 p-1 bg-orange-100 rounded-md transition-colors">
+          <button onClick={() => setShowAddForm(!showAddForm)} className="text-orange-400 hover:text-orange-300 p-1 bg-slate-800/50 rounded-md transition-colors">
             {showAddForm ? <X size={16} /> : <Plus size={16} />}
           </button>
         )}
@@ -99,28 +99,28 @@ export default function WidgetCalendario({ currentUser, isAdmin }) {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               onSubmit={handleAddEvent} 
-              className="mb-4 space-y-2 overflow-hidden bg-slate-100 p-3 rounded-xl border border-slate-300"
+              className="mb-4 space-y-2 overflow-hidden bg-slate-800/50 p-3 rounded-xl border border-slate-700/50"
             >
-              <input type="date" required value={newEventDate} onChange={e => setNewEventDate(e.target.value)} className="w-full text-xs p-2 rounded-lg bg-white border border-slate-300 text-slate-800" />
-              <input type="text" required placeholder="Título do Evento" value={newEventTitle} onChange={e => setNewEventTitle(e.target.value)} className="w-full text-xs p-2 rounded-lg bg-white border border-slate-300 text-slate-800" />
+              <input type="date" required value={newEventDate} onChange={e => setNewEventDate(e.target.value)} className="w-full text-xs p-2 rounded-lg glass-input text-slate-200" />
+              <input type="text" required placeholder="Título do Evento" value={newEventTitle} onChange={e => setNewEventTitle(e.target.value)} className="w-full text-xs p-2 rounded-lg glass-input text-slate-200" />
               <div className="flex gap-2">
                 {['bg-red-500', 'bg-blue-500', 'bg-orange-500', 'bg-green-500', 'bg-purple-500'].map(color => (
                   <button key={color} type="button" onClick={() => setNewEventColor(color)} className={`w-6 h-6 rounded-full ${color} ${newEventColor === color ? 'ring-2 ring-slate-800 ring-offset-1' : ''}`} />
                 ))}
               </div>
-              <button type="submit" className="w-full bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold py-2 rounded-lg transition-colors">Adicionar</button>
+              <button type="submit" className="w-full bg-orange-500 hover:bg-orange-400 text-white text-xs font-bold py-2 rounded-lg transition-colors">Adicionar</button>
             </motion.form>
           )}
         </AnimatePresence>
 
-        <div className="flex items-center justify-between mb-4 bg-slate-100 rounded-lg p-2 border border-slate-300">
-          <button onClick={prevMonth} className="p-1 hover:bg-slate-200 rounded-md text-slate-600 hover:text-slate-800 transition">
+        <div className="flex items-center justify-between mb-4 bg-slate-800/50 rounded-lg p-2 border border-slate-700/50">
+          <button onClick={prevMonth} className="p-1 hover:bg-slate-700 rounded-md text-slate-400 hover:text-white transition">
             <ChevronLeft size={16} />
           </button>
-          <span className="text-sm font-bold text-slate-800">
+          <span className="text-sm font-bold text-slate-200">
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </span>
-          <button onClick={nextMonth} className="p-1 hover:bg-slate-200 rounded-md text-slate-600 hover:text-slate-800 transition">
+          <button onClick={nextMonth} className="p-1 hover:bg-slate-700 rounded-md text-slate-400 hover:text-white transition">
             <ChevronRight size={16} />
           </button>
         </div>
@@ -141,7 +141,7 @@ export default function WidgetCalendario({ currentUser, isAdmin }) {
           {Array.from({ length: daysInMonth }).map((_, i) => {
             const day = i + 1;
             const dayEvents = getEventsForDay(day);
-            const todayClass = isToday(day) ? 'bg-orange-600 text-white font-bold ring-2 ring-orange-400/50' : 'text-slate-700 hover:bg-slate-200';
+            const todayClass = isToday(day) ? 'bg-orange-500 text-white font-bold ring-2 ring-orange-400/50' : 'text-slate-300 hover:bg-slate-700/50';
             
             return (
               <div 
@@ -162,14 +162,14 @@ export default function WidgetCalendario({ currentUser, isAdmin }) {
         </div>
 
         {/* Lista de eventos próximos */}
-        <div className="mt-4 pt-4 border-t border-slate-300 space-y-2 max-h-32 overflow-y-auto pr-1">
+        <div className="mt-4 pt-4 border-t border-slate-700/50 space-y-2 max-h-32 overflow-y-auto pr-1">
           {eventsThisMonth.length === 0 ? (
             <p className="text-xs text-slate-500 text-center">Nenhum evento neste mês.</p>
           ) : (
             eventsThisMonth.map((evt) => (
               <div key={evt.id} className="flex items-center gap-2 text-xs group/event">
                 <div className={`w-2 h-2 rounded-full ${evt.color}`} />
-                <span className="text-slate-800 flex-1">{evt.title}</span>
+                <span className="text-slate-300 flex-1">{evt.title}</span>
                 <span className="text-slate-500 font-medium">Dia {evt.day}</span>
                 {isAdmin && (
                   <button onClick={() => handleDeleteEvent(evt.id)} className="opacity-0 group-hover/event:opacity-100 text-red-500 hover:text-red-700 p-1 transition-opacity">
