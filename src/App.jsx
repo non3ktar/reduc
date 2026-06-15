@@ -11,6 +11,7 @@ import Blog from './pages/Blog';
 import ScrollToTop from './components/ScrollToTop';
 import { supabase } from './supabase';
 import { usePushNotifications } from './hooks/usePushNotifications';
+import { Capacitor } from '@capacitor/core';
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -43,8 +44,10 @@ export default function App() {
 
   if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-orange-500 font-bold">Carregando Reduc...</div>;
 
+  const routerBasename = Capacitor.isNativePlatform() ? "" : "/reduc";
+
   return (
-    <Router basename="/reduc">
+    <Router basename={routerBasename}>
       <ScrollToTop />
       <Routes>
         <Route path="/login" element={session ? <Navigate to="/" /> : <Login />} />
