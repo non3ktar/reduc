@@ -32,7 +32,7 @@ export default function Admin({ user }) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-center p-4">
         <ShieldAlert size={64} className="text-red-500 mb-4" />
-        <h1 className="text-2xl font-bold text-white mb-2">Acesso Negado</h1>
+        <h1 className="text-2xl font-bold text-slate-800 mb-2">Acesso Negado</h1>
         <p className="text-slate-400 mb-6">Você não tem permissão de Superusuário para acessar esta área.</p>
         <button onClick={() => navigate('/')} className="bg-orange-600 hover:bg-orange-500 text-white px-6 py-2 rounded-full font-bold">Voltar ao Início</button>
       </div>
@@ -42,7 +42,7 @@ export default function Admin({ user }) {
   return (
     <div className="min-h-screen pb-20 pt-10 px-4 md:px-12 max-w-4xl mx-auto relative">
       <div className="flex items-center gap-4 mb-8 border-b border-slate-700/50 pb-6">
-        <button onClick={() => navigate('/')} className="text-slate-400 hover:text-white glass p-2 rounded-full">
+        <button onClick={() => navigate('/')} className="text-slate-400 hover:text-slate-800 glass p-2 rounded-full">
           <ArrowLeft size={20} />
         </button>
         <div>
@@ -55,12 +55,12 @@ export default function Admin({ user }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="glass-card p-6 border-red-500/30 shadow-lg shadow-red-500/10">
-          <h2 className="text-xl font-bold text-white mb-2">Moderação em Breve</h2>
+          <h2 className="text-xl font-bold text-slate-800 mb-2">Moderação em Breve</h2>
           <p className="text-slate-400 text-sm">Aqui você poderá apagar posts de qualquer usuário e banir contas que quebrarem as regras.</p>
         </div>
 
         <div className="glass-card p-6 border-orange-500/30">
-          <h2 className="text-xl font-bold text-white mb-4">Seus Widgets Globais</h2>
+          <h2 className="text-xl font-bold text-slate-800 mb-4">Seus Widgets Globais</h2>
           <p className="text-slate-400 text-sm mb-4">Os widgets criados por você no Marketplace servem como base para a plataforma.</p>
           <div className="space-y-3">
             {globalWidgets.map(w => (
