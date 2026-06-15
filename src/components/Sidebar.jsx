@@ -20,12 +20,18 @@ export default function Sidebar({ currentUser }) {
       if (data && data.is_admin) setIsAdmin(true);
     });
 
-    supabase.from('user_settings').select('active_widgets').eq('user_id', currentUser.id).single().then(({ data }) => {
-      if (data && data.active_widgets) setActiveWidgets(data.active_widgets);
-    });
+    // Fetch platform configuration (always from an Admin's profile)
+    supabase.from('profiles').select('id').eq('is_admin', true).limit(1).single().then(({ data: adminData }) => {
+      // Se encontrou um admin, usa as configurações dele para todos. Senão, usa as do usuário atual (fallback).
+      const configUserId = adminData ? adminData.id : currentUser.id;
 
-    supabase.from('custom_widgets').select('*').eq('user_id', currentUser.id).then(({ data }) => {
-      if (data) setCustomWidgets(data);
+      supabase.from('user_settings').select('active_widgets').eq('user_id', configUserId).single().then(({ data }) => {
+        if (data && data.active_widgets) setActiveWidgets(data.active_widgets);
+      });
+
+      supabase.from('custom_widgets').select('*').eq('user_id', configUserId).then(({ data }) => {
+        if (data) setCustomWidgets(data);
+      });
     });
 
   }, [currentUser]);
