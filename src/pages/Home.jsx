@@ -5,6 +5,7 @@ import Post from '../components/Post';
 import Sidebar from '../components/Sidebar';
 import ThemeToggle from '../components/ThemeToggle';
 import WidgetMembros from '../components/widgets/WidgetMembros';
+import WidgetVideoDestaque from '../components/widgets/WidgetVideoDestaque';
 import { LogOut, Home as HomeIcon, Bell, MessageCircle, BookOpen, BadgeCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -117,7 +118,8 @@ export default function Home({ user }) {
                </button>
              </div>
           </div>
-
+          
+          <WidgetVideoDestaque currentUser={userData} isAdmin={userData?.is_admin} />
           <CreatePost user={userData} />
 
           <div className="space-y-6">
