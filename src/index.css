@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #f97316;
+  --color-background: #0f172a;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-900 text-slate-100 antialiased min-h-screen;
+    background-image: radial-gradient(circle at top right, #1e293b, #0f172a);
+  }
+}
+
+.glass {
+  @apply bg-slate-800/40 backdrop-blur-md border border-slate-700/50 shadow-xl;
+}
+
+.glass-card {
+  @apply bg-slate-800/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl;
+}
+
+.glass-input {
+  @apply bg-slate-900/50 border border-slate-700/50 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all;
+}
