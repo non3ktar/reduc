@@ -89,3 +89,28 @@ create policy "Tasks viewable by everyone." on public.tasks for select using (tr
 create policy "Tasks modifiable by authenticated users." on public.tasks for all using (auth.role() = 'authenticated');
 create policy "Submissions viewable by everyone." on public.task_submissions for select using (true);
 create policy "Submissions modifiable by authenticated users." on public.task_submissions for all using (auth.role() = 'authenticated');
+
+-- 6. Tabelas para Notícias com Recibo de Leitura
+create table public.news (
+  id uuid default gen_random_uuid() primary key,
+  title text not null,
+  content text not null,
+  created_by uuid references public.profiles(id) on delete cascade not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create table public.news_receipts (
+  id uuid default gen_random_uuid() primary key,
+  news_id uuid references public.news(id) on delete cascade not null,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  read_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  unique(news_id, user_id)
+);
+
+alter table public.news enable row level security;
+alter table public.news_receipts enable row level security;
+
+create policy "News viewable by everyone." on public.news for select using (true);
+create policy "News modifiable by authenticated users." on public.news for all using (auth.role() = 'authenticated');
+create policy "Receipts viewable by everyone." on public.news_receipts for select using (true);
+create policy "Receipts modifiable by authenticated users." on public.news_receipts for all using (auth.role() = 'authenticated');
