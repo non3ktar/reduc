@@ -6,7 +6,8 @@ create table public.profiles (
   avatar text,
   birth_date text,
   location text,
-  role text
+  role text,
+  push_token text
 );
 
 create table public.posts (

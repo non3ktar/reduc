@@ -10,10 +10,13 @@ import Privacy from './pages/Privacy';
 import Blog from './pages/Blog';
 import ScrollToTop from './components/ScrollToTop';
 import { supabase } from './supabase';
+import { usePushNotifications } from './hooks/usePushNotifications';
 
 export default function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  usePushNotifications(session?.user);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
