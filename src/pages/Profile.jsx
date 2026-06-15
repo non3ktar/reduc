@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
-import Post from '../components/Post';
-import { ArrowLeft, Edit3, MapPin, Briefcase, Calendar, X } from 'lucide-react';
+import { ArrowLeft, Edit3, MapPin, Briefcase, Calendar, X, BadgeCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ThemeToggle from '../components/ThemeToggle';
+import Post from '../components/Post';
 
 export default function Profile({ currentUser }) {
   const { id } = useParams();
@@ -18,6 +19,9 @@ export default function Profile({ currentUser }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
   const [editAvatar, setEditAvatar] = useState('');
+  const [editBirthDate, setEditBirthDate] = useState('');
+  const [editLocation, setEditLocation] = useState('');
+  const [editRole, setEditRole] = useState('');
 
   useEffect(() => {
     if (!targetId) return;
@@ -33,8 +37,11 @@ export default function Profile({ currentUser }) {
 
   const handleEditClick = () => {
     if (profileUser) {
-      setEditName(profileUser.name);
-      setEditAvatar(profileUser.avatar);
+      setEditName(profileUser.name || '');
+      setEditAvatar(profileUser.avatar || '');
+      setEditBirthDate(profileUser.birth_date || '');
+      setEditLocation(profileUser.location || '');
+      setEditRole(profileUser.role || '');
       setIsEditing(true);
     }
   };
@@ -44,9 +51,12 @@ export default function Profile({ currentUser }) {
     if (!editName.trim() || !editAvatar.trim()) return;
     await supabase.from('profiles').update({
       name: editName,
-      avatar: editAvatar
+      avatar: editAvatar,
+      birth_date: editBirthDate || null,
+      location: editLocation || null,
+      role: editRole || null
     }).eq('id', targetId);
-    setProfileUser(prev => ({ ...prev, name: editName, avatar: editAvatar }));
+    setProfileUser(prev => ({ ...prev, name: editName, avatar: editAvatar, birth_date: editBirthDate, location: editLocation, role: editRole }));
     setIsEditing(false);
   };
 
@@ -65,12 +75,15 @@ export default function Profile({ currentUser }) {
           {isOwnProfile && (
             <button 
               onClick={handleEditClick}
-              className="absolute top-4 right-4 bg-slate-900/40 hover:bg-slate-900/80 p-2.5 rounded-full text-white transition backdrop-blur-md shadow-lg" 
+              className="absolute top-4 right-4 flex items-center gap-2 bg-slate-900/60 hover:bg-slate-900/90 px-4 py-2 rounded-full text-white transition backdrop-blur-md shadow-lg border border-white/10 text-sm font-semibold" 
               title="Editar Perfil"
             >
-              <Edit3 size={18} />
+              <Edit3 size={16} /> Editar Perfil
             </button>
           )}
+          <div className="absolute top-4 left-4">
+            <ThemeToggle />
+          </div>
         </div>
         <div className="px-6 pb-8 relative">
           <div className="flex justify-between items-end -mt-16 mb-4">
@@ -86,13 +99,20 @@ export default function Profile({ currentUser }) {
             )}
           </div>
           
-          <h1 className="text-3xl font-bold text-slate-100">{profileUser.name}</h1>
-          <p className="text-slate-400 mb-6 font-medium">@{profileUser.email.split('@')[0]}</p>
+          <h1 className="text-3xl font-bold text-slate-100 flex items-center gap-2">
+            {profileUser.name}
+            {profileUser.is_verified && <BadgeCheck size={28} className="fill-blue-500 text-white" title="Verificado" />}
+          </h1>
+          <p className="text-slate-400 mb-6 font-medium">@{profileUser.email ? profileUser.email.split('@')[0] : (profileUser.name?.replace(/\s+/g, '').toLowerCase() || 'usuario')}</p>
 
           <div className="flex flex-wrap items-center gap-6 text-sm text-slate-300 bg-slate-900/30 p-4 rounded-xl border border-slate-700/50 w-fit">
-            <span className="flex items-center gap-2"><Briefcase size={16} className="text-orange-500"/> Professor(a)</span>
-            <span className="flex items-center gap-2"><MapPin size={16} className="text-orange-500"/> Brasil</span>
-            <span className="flex items-center gap-2"><Calendar size={16} className="text-orange-500"/> Desde 2026</span>
+            <span className="flex items-center gap-2"><Briefcase size={16} className="text-orange-500"/> {profileUser.role || 'Professor(a)'}</span>
+            <span className="flex items-center gap-2"><MapPin size={16} className="text-orange-500"/> {profileUser.location || 'Brasil'}</span>
+            {profileUser.birth_date ? (
+              <span className="flex items-center gap-2"><Calendar size={16} className="text-orange-500"/> Nasc.: {new Date(profileUser.birth_date + 'T12:00:00Z').toLocaleDateString('pt-BR')}</span>
+            ) : (
+              <span className="flex items-center gap-2"><Calendar size={16} className="text-orange-500"/> Desde 2026</span>
+            )}
           </div>
         </div>
       </motion.div>
@@ -125,7 +145,7 @@ export default function Profile({ currentUser }) {
                 <img src={editAvatar || 'https://placehold.co/150'} alt="Preview" className="w-24 h-24 rounded-full border-2 border-orange-500 object-cover" />
               </div>
 
-              <form onSubmit={handleSaveProfile} className="space-y-4">
+              <form onSubmit={handleSaveProfile} className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
                 <div>
                   <label className="block text-xs text-slate-400 mb-1 uppercase font-bold tracking-wide">Nome de Exibição</label>
                   <input type="text" required value={editName} onChange={e => setEditName(e.target.value)} className="glass-input w-full" />
@@ -133,6 +153,18 @@ export default function Profile({ currentUser }) {
                 <div>
                   <label className="block text-xs text-slate-400 mb-1 uppercase font-bold tracking-wide">URL da Foto de Perfil</label>
                   <input type="url" required value={editAvatar} onChange={e => setEditAvatar(e.target.value)} className="glass-input w-full" />
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-400 mb-1 uppercase font-bold tracking-wide">Data de Nascimento</label>
+                  <input type="date" value={editBirthDate} onChange={e => setEditBirthDate(e.target.value)} className="glass-input w-full" />
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-400 mb-1 uppercase font-bold tracking-wide">Localidade (Cidade/Estado)</label>
+                  <input type="text" value={editLocation} onChange={e => setEditLocation(e.target.value)} placeholder="Ex: Salinas da Margarida, BA" className="glass-input w-full" />
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-400 mb-1 uppercase font-bold tracking-wide">Cargo / Título</label>
+                  <input type="text" value={editRole} onChange={e => setEditRole(e.target.value)} placeholder="Ex: Professor(a) de História" className="glass-input w-full" />
                 </div>
                 
                 <button type="submit" className="w-full bg-orange-600 hover:bg-orange-500 text-white font-semibold py-3 rounded-xl transition-colors shadow-lg shadow-orange-500/30 mt-4">
