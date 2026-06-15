@@ -3,7 +3,10 @@ create table public.profiles (
   id uuid references auth.users on delete cascade not null primary key,
   email text not null,
   name text not null,
-  avatar text
+  avatar text,
+  birth_date text,
+  location text,
+  role text
 );
 
 create table public.posts (

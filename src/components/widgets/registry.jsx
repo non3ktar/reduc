@@ -8,6 +8,9 @@ import WidgetMetas from './WidgetMetas';
 import WidgetAtalhos from './WidgetAtalhos';
 import WidgetEnquetes from './WidgetEnquetes';
 import WidgetChat from './WidgetChat';
+import WidgetLinks from './WidgetLinks';
+import WidgetArtigos from './WidgetArtigos';
+import WidgetCalendario from './WidgetCalendario';
 
 export const availableWidgets = [
   { id: 'chat', name: 'Chat Global', description: 'Sala de bate-papo em tempo real com todos da plataforma.', component: WidgetChat },
@@ -20,4 +23,7 @@ export const availableWidgets = [
   { id: 'metas', name: 'Meta Diária', description: 'Barra de progresso das suas interações para criar hábitos.', component: WidgetMetas },
   { id: 'atalhos', name: 'Atalhos Rápidos', description: 'Botões de ação rápida para criar conteúdos e turmas.', component: WidgetAtalhos },
   { id: 'enquetes', name: 'Enquetes Rápidas', description: 'Participe da pesquisa rápida do dia da comunidade.', component: WidgetEnquetes },
+  { id: 'links', name: 'Links Úteis', description: 'Repositório de links úteis da escola ou disciplina.', component: WidgetLinks },
+  { id: 'artigos', name: 'Últimos Artigos', description: 'Mostra os textos e publicações longas mais recentes do Blog.', component: WidgetArtigos },
+  { id: 'calendario', name: 'Calendário Escolar', description: 'Fique de olho nas próximas datas importantes.', component: WidgetCalendario },
 ];

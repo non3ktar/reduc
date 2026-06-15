@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabase';
-import { Heart, MessageCircle, Share2, MoreHorizontal, Send } from 'lucide-react';
+import { Heart, MessageCircle, Share2, MoreHorizontal, Send, BarChart2, SmilePlus, BadgeCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
+
+const COMMON_EMOJIS = ['👍','😂','❤️','😍','😊','🔥','💡','🚀','🙌','🤔','👏','🎉','💯','👀','📚','✏️'];
 
 export default function Post({ post, currentUser }) {
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [showMenu, setShowMenu] = useState(false);
+  const [showEmojis, setShowEmojis] = useState(false);
 
   const handleDelete = async () => {
     if (window.confirm("Tem certeza que deseja excluir esta publicação?")) {
@@ -78,14 +81,17 @@ export default function Post({ post, currentUser }) {
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-card overflow-hidden"
+      className="glass-card"
     >
       <div className="p-4">
         <div className="flex justify-between items-center mb-4">
           <Link to={`/profile/${author.id}`} className="flex items-center gap-3 group">
             <img src={author.avatar} alt={author.name} className="w-10 h-10 rounded-full border border-slate-600 group-hover:border-orange-500 transition-colors object-cover" />
             <div>
-              <h3 className="font-semibold text-slate-100 group-hover:text-orange-400 transition-colors">{author.name}</h3>
+              <h3 className="font-semibold text-slate-100 group-hover:text-orange-400 transition-colors flex items-center gap-1">
+                {author.name}
+                {author.is_verified && <BadgeCheck size={16} className="fill-blue-500 text-white" title="Verificado" />}
+              </h3>
               <p className="text-xs text-slate-400">{date}</p>
             </div>
           </Link>
@@ -128,6 +134,62 @@ export default function Post({ post, currentUser }) {
         <img src={post.image} alt="Post content" className="w-full max-h-96 object-cover border-y border-slate-700/50" />
       )}
 
+      {post.poll_data && (
+        <div className="px-4 pb-4">
+          <div className="bg-slate-900/40 border border-slate-700/50 rounded-xl p-4">
+            <h4 className="font-bold text-slate-200 mb-3 flex items-center gap-2">
+              <BarChart2 size={16} className="text-orange-400" />
+              {post.poll_data.question}
+            </h4>
+            <div className="space-y-2">
+              {post.poll_data.options.map(option => {
+                const hasVoted = currentUser && post.poll_data.voted_users?.includes(currentUser.id);
+                const totalVotes = post.poll_data.options.reduce((acc, curr) => acc + curr.votes, 0);
+                const percentage = totalVotes === 0 ? 0 : Math.round((option.votes / totalVotes) * 100);
+
+                return (
+                  <div key={option.id} className="relative overflow-hidden rounded-lg">
+                    {hasVoted && (
+                      <motion.div 
+                        initial={{ width: 0 }} 
+                        animate={{ width: `${percentage}%` }} 
+                        transition={{ duration: 1, ease: "easeOut" }}
+                        className="absolute top-0 left-0 h-full bg-orange-500/20 z-0" 
+                      />
+                    )}
+                    <button 
+                      disabled={hasVoted || !currentUser}
+                      onClick={async () => {
+                        if (hasVoted || !currentUser) return;
+                        const newPollData = { ...post.poll_data };
+                        newPollData.voted_users = [...(newPollData.voted_users || []), currentUser.id];
+                        newPollData.options = newPollData.options.map(opt => 
+                          opt.id === option.id ? { ...opt, votes: opt.votes + 1 } : opt
+                        );
+                        await supabase.from('posts').update({ poll_data: newPollData }).eq('id', post.id);
+                      }}
+                      className={`w-full relative z-10 flex items-center justify-between text-left px-3 py-2 text-sm font-medium border transition-all ${
+                        hasVoted 
+                          ? 'border-slate-700/50 bg-transparent text-slate-300' 
+                          : 'bg-slate-800 hover:bg-orange-500/10 hover:text-orange-300 border-slate-700 hover:border-orange-500/50 text-slate-300'
+                      } rounded-lg`}
+                    >
+                      <span>{option.text}</span>
+                      {hasVoted && <span className="font-bold text-xs">{percentage}%</span>}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+            {post.poll_data.voted_users?.includes(currentUser?.id) && (
+              <p className="text-[10px] text-slate-500 mt-2 text-center">
+                {post.poll_data.options.reduce((acc, curr) => acc + curr.votes, 0)} votos no total
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Interaction Bar */}
       <div className="px-4 py-3 flex items-center gap-6 border-t border-slate-700/50 bg-slate-900/20">
         <button 
@@ -158,7 +220,7 @@ export default function Post({ post, currentUser }) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="border-t border-slate-700/50 bg-slate-950/50 overflow-hidden"
+            className="border-t border-slate-700/50 bg-slate-950/50"
           >
             <div className="p-4 space-y-4">
               {comments.map(comment => (
@@ -177,8 +239,31 @@ export default function Post({ post, currentUser }) {
                   placeholder="Escreva um comentário..." 
                   value={newComment}
                   onChange={e => setNewComment(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-full py-2.5 pl-4 pr-12 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
+                  className="w-full bg-slate-900 border border-slate-700 rounded-full py-2.5 pl-4 pr-24 text-sm text-slate-100 focus:outline-none focus:border-orange-500 transition-colors"
                 />
+                
+                <div className="absolute right-12 flex items-center">
+                  <button 
+                    type="button" 
+                    onClick={() => setShowEmojis(!showEmojis)} 
+                    className="p-1.5 text-slate-400 hover:text-orange-400 transition-colors"
+                  >
+                    <SmilePlus size={20} />
+                  </button>
+                  
+                  <AnimatePresence>
+                    {showEmojis && (
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute bottom-full right-0 mb-2 bg-slate-900 border border-slate-700 p-3 rounded-xl shadow-xl w-64 z-50 grid grid-cols-4 gap-2">
+                        {COMMON_EMOJIS.map((emoji, idx) => (
+                          <button key={idx} type="button" onClick={() => { setNewComment(prev => prev + emoji); setShowEmojis(false); }} className="text-2xl hover:bg-slate-800 rounded-lg p-1 transition transform hover:scale-110">
+                            {emoji}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
                 <button 
                   type="submit" 
                   disabled={!newComment.trim()}

@@ -3,7 +3,9 @@ import { supabase } from '../supabase';
 import CreatePost from '../components/CreatePost';
 import Post from '../components/Post';
 import Sidebar from '../components/Sidebar';
-import { LogOut, Home as HomeIcon, Bell, MessageCircle } from 'lucide-react';
+import ThemeToggle from '../components/ThemeToggle';
+import WidgetMembros from '../components/widgets/WidgetMembros';
+import { LogOut, Home as HomeIcon, Bell, MessageCircle, BookOpen, BadgeCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Home({ user }) {
@@ -32,7 +34,7 @@ export default function Home({ user }) {
     loadProfile();
     
     const fetchPosts = () => {
-      supabase.from('posts').select('*, author:profiles(id, name, avatar)').order('created_at', { ascending: false })
+      supabase.from('posts').select('*, author:profiles(id, name, avatar, is_verified)').order('created_at', { ascending: false })
         .then(({ data }) => setPosts(data || []));
     };
     
@@ -61,6 +63,7 @@ export default function Home({ user }) {
           <Link to="/" className="text-2xl font-bold text-orange-500 hover:opacity-80 transition">Reduc</Link>
           <div className="flex items-center gap-6">
             <Link to="/" className="text-orange-500 hover:text-orange-400 transition-colors"><HomeIcon size={24} /></Link>
+            <Link to="/blog" className="text-slate-300 hover:text-orange-400 transition-colors"><BookOpen size={24} /></Link>
             
             <div className="relative">
               <button onClick={() => {setShowMsg(!showMsg); setShowNotif(false)}} className="text-slate-300 hover:text-white transition-colors relative"><MessageCircle size={24} /></button>
@@ -74,9 +77,13 @@ export default function Home({ user }) {
 
             <div className="flex items-center gap-3 ml-4 pl-4 border-l border-slate-700">
               <Link to="/profile" className="flex items-center gap-3 hover:opacity-80 transition group">
-                <span className="font-medium group-hover:text-orange-400">{userData.name}</span>
+                <span className="font-medium group-hover:text-orange-400 flex items-center gap-1">
+                  {userData.name}
+                  {userData.is_verified && <BadgeCheck size={14} className="fill-blue-500 text-white" title="Verificado" />}
+                </span>
                 <img src={userData.avatar} alt="Avatar" className="w-8 h-8 rounded-full border border-orange-500/50 group-hover:border-orange-500" />
               </Link>
+              <ThemeToggle />
               <button onClick={handleLogout} className="text-red-400 hover:text-red-300 ml-2" title="Sair">
                 <LogOut size={20} />
               </button>
@@ -85,19 +92,30 @@ export default function Home({ user }) {
         </div>
       </nav>
 
-      <main className="max-w-5xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-[minmax(0,600px)_320px] justify-center gap-8">
+      <main className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-[minmax(0,600px)_320px] lg:grid-cols-[280px_minmax(0,600px)_320px] justify-center gap-6">
+        {/* Left Sidebar (Desktop Only) */}
+        <aside className="hidden lg:block space-y-6">
+          <WidgetMembros />
+        </aside>
+
         <div className="space-y-6">
           <div className="md:hidden flex justify-between items-center mb-6 glass-card p-4">
              <Link to="/profile" className="flex items-center gap-3 hover:opacity-80 transition">
                 <img src={userData.avatar} alt="Avatar" className="w-10 h-10 rounded-full border-2 border-orange-500" />
                 <div>
-                  <h2 className="font-bold">{userData.name}</h2>
+                  <h2 className="font-bold flex items-center gap-1">
+                    {userData.name}
+                    {userData.is_verified && <BadgeCheck size={14} className="fill-blue-500 text-white" title="Verificado" />}
+                  </h2>
                   <p className="text-xs text-slate-400">{userData.email}</p>
                 </div>
              </Link>
-             <button onClick={handleLogout} className="text-red-400 p-2 glass rounded-full" title="Sair">
-                <LogOut size={20} />
-             </button>
+             <div className="flex gap-2 items-center">
+               <ThemeToggle />
+               <button onClick={handleLogout} className="text-red-400 p-2 glass rounded-full" title="Sair">
+                  <LogOut size={20} />
+               </button>
+             </div>
           </div>
 
           <CreatePost user={userData} />
@@ -121,7 +139,8 @@ export default function Home({ user }) {
       {/* Bottom Nav Mobile */}
       <nav className="fixed bottom-0 w-full glass z-50 md:hidden pb-safe">
         <div className="flex items-center justify-around h-16 relative">
-          <button onClick={() => window.scrollTo(0,0)} className="text-orange-500"><HomeIcon size={24} /></button>
+          <Link to="/" className="text-orange-500"><HomeIcon size={24} /></Link>
+          <Link to="/blog" className="text-slate-400"><BookOpen size={24} /></Link>
           
           <button onClick={() => {setShowMsg(!showMsg); setShowNotif(false)}} className="text-slate-400 relative">
             <MessageCircle size={24} />

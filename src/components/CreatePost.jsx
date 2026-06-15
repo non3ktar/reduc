@@ -1,10 +1,21 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabase';
-import { ImagePlus, Send } from 'lucide-react';
+import { ImagePlus, Send, SmilePlus, BarChart2, X, Plus, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const COMMON_EMOJIS = ['👍','😂','❤️','😍','😊','🔥','💡','🚀','🙌','🤔','👏','🎉','💯','👀','📚','✏️'];
 
 export default function CreatePost({ user }) {
   const [content, setContent] = useState('');
   const [image, setImage] = useState(null);
+  
+  // Emoji State
+  const [showEmojis, setShowEmojis] = useState(false);
+  
+  // Poll State
+  const [showPoll, setShowPoll] = useState(false);
+  const [pollQuestion, setPollQuestion] = useState('');
+  const [pollOptions, setPollOptions] = useState(['', '']);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -15,22 +26,62 @@ export default function CreatePost({ user }) {
     }
   };
 
+  const addEmoji = (emoji) => {
+    setContent(prev => prev + emoji);
+    setShowEmojis(false);
+  };
+
+  const updatePollOption = (index, value) => {
+    const newOptions = [...pollOptions];
+    newOptions[index] = value;
+    setPollOptions(newOptions);
+  };
+
+  const addPollOption = () => {
+    if (pollOptions.length < 5) {
+      setPollOptions([...pollOptions, '']);
+    }
+  };
+
+  const removePollOption = (index) => {
+    if (pollOptions.length > 2) {
+      setPollOptions(pollOptions.filter((_, i) => i !== index));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!content.trim() && !image) return;
+    
+    const validPollOptions = pollOptions.filter(opt => opt.trim() !== '');
+    const hasValidPoll = showPoll && pollQuestion.trim() !== '' && validPollOptions.length >= 2;
+    
+    if (!content.trim() && !image && !hasValidPoll) return;
+
+    let pollData = null;
+    if (hasValidPoll) {
+      pollData = {
+        question: pollQuestion,
+        options: validPollOptions.map((opt, idx) => ({ id: idx + 1, text: opt, votes: 0 })),
+        voted_users: [] // to track who voted in this specific post
+      };
+    }
 
     await supabase.from('posts').insert({
       user_id: user.id,
       content,
-      image
+      image,
+      poll_data: pollData
     });
 
     setContent('');
     setImage(null);
+    setShowPoll(false);
+    setPollQuestion('');
+    setPollOptions(['', '']);
   };
 
   return (
-    <div className="glass-card p-4">
+    <div className="glass-card p-4 relative">
       <form onSubmit={handleSubmit}>
         <textarea
           placeholder={`O que você quer compartilhar, ${user.name.split(' ')[0]}?`}
@@ -45,23 +96,92 @@ export default function CreatePost({ user }) {
             <button
               type="button"
               onClick={() => setImage(null)}
-              className="absolute top-2 right-2 bg-slate-900/80 p-2 rounded-full hover:bg-red-500/80 transition"
+              className="absolute top-2 right-2 bg-slate-900/80 p-2 rounded-full hover:bg-red-500/80 transition text-white"
             >
-              &times;
+              <X size={16} />
             </button>
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-3 border-t border-slate-700/50">
-          <label className="cursor-pointer text-orange-400 hover:text-orange-300 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-800/50">
-            <ImagePlus size={20} />
-            <span className="text-sm font-medium">Foto</span>
-            <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-          </label>
+        <AnimatePresence>
+          {showPoll && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700/50 overflow-hidden">
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="text-sm font-bold text-orange-400">Criar Enquete</h4>
+                <button type="button" onClick={() => setShowPoll(false)} className="text-slate-500 hover:text-white">
+                  <X size={16} />
+                </button>
+              </div>
+              <input 
+                type="text" 
+                placeholder="Qual é a pergunta da enquete?" 
+                value={pollQuestion}
+                onChange={e => setPollQuestion(e.target.value)}
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:border-orange-500"
+              />
+              <div className="space-y-2">
+                {pollOptions.map((opt, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <input 
+                      type="text" 
+                      placeholder={`Opção ${idx + 1}`} 
+                      value={opt}
+                      onChange={e => updatePollOption(idx, e.target.value)}
+                      className="flex-1 bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-orange-500"
+                    />
+                    {pollOptions.length > 2 && (
+                      <button type="button" onClick={() => removePollOption(idx)} className="text-slate-500 hover:text-red-400">
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {pollOptions.length < 5 && (
+                <button type="button" onClick={addPollOption} className="mt-3 text-xs text-orange-400 font-medium flex items-center gap-1 hover:text-orange-300">
+                  <Plus size={14} /> Adicionar Opção
+                </button>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="flex items-center justify-between pt-3 border-t border-slate-700/50 relative">
+          <div className="flex items-center gap-2">
+            <label className="cursor-pointer text-orange-400 hover:text-orange-300 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-800/50">
+              <ImagePlus size={20} />
+              <span className="text-sm font-medium hidden sm:inline">Foto</span>
+              <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+            </label>
+
+            <button type="button" onClick={() => setShowPoll(!showPoll)} className={`text-orange-400 hover:text-orange-300 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-800/50 ${showPoll ? 'bg-slate-800/50' : ''}`}>
+              <BarChart2 size={20} />
+              <span className="text-sm font-medium hidden sm:inline">Enquete</span>
+            </button>
+
+            <div className="relative">
+              <button type="button" onClick={() => setShowEmojis(!showEmojis)} className="text-orange-400 hover:text-orange-300 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-800/50">
+                <SmilePlus size={20} />
+                <span className="text-sm font-medium hidden sm:inline">Emoji</span>
+              </button>
+              
+              <AnimatePresence>
+                {showEmojis && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute bottom-full left-0 mb-2 bg-slate-900 border border-slate-700 p-3 rounded-xl shadow-xl w-64 z-50 grid grid-cols-4 gap-2">
+                    {COMMON_EMOJIS.map((emoji, idx) => (
+                      <button key={idx} type="button" onClick={() => addEmoji(emoji)} className="text-2xl hover:bg-slate-800 rounded-lg p-1 transition transform hover:scale-110">
+                        {emoji}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
 
           <button
             type="submit"
-            disabled={!content.trim() && !image}
+            disabled={(!content.trim() && !image && !showPoll) || (showPoll && (pollQuestion.trim() === '' || pollOptions.filter(o => o.trim() !== '').length < 2))}
             className="bg-orange-600 hover:bg-orange-500 disabled:opacity-50 disabled:cursor-not-allowed text-white px-5 py-2 rounded-full font-medium transition flex items-center gap-2 shadow-lg shadow-orange-500/20"
           >
             <span>Publicar</span>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabase';
-import { UserPlus, UserCheck } from 'lucide-react';
+import { UserPlus, UserCheck, BadgeCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 function FollowUser({ user }) {
@@ -10,7 +10,10 @@ function FollowUser({ user }) {
     <div className="flex items-center gap-3 group">
       <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full border border-slate-700 group-hover:border-orange-500 transition-colors object-cover" />
       <div className="flex-1 min-w-0">
-        <h4 className="text-sm font-semibold text-slate-200 truncate">{user.name}</h4>
+        <h4 className="text-sm font-semibold text-slate-200 truncate flex items-center gap-1">
+          {user.name}
+          {user.is_verified && <BadgeCheck size={14} className="fill-blue-500 text-white flex-shrink-0" title="Verificado" />}
+        </h4>
         <p className="text-xs text-slate-500 truncate">Sugerido para você</p>
       </div>
       <button 

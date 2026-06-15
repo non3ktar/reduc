@@ -1,0 +1,227 @@
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../supabase';
+import { BookOpen, FileText, Send, X, Clock, User, Trash2, ArrowLeft } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+
+export default function Blog({ user }) {
+  const [articles, setArticles] = useState([]);
+  const [isComposing, setIsComposing] = useState(false);
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [readingArticle, setReadingArticle] = useState(null);
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
+  const fetchArticles = async () => {
+    const { data, error } = await supabase
+      .from('articles')
+      .select('*, author:author_id(name, avatar)')
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      setArticles(data);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!title.trim() || !content.trim()) return;
+
+    await supabase.from('articles').insert({
+      author_id: user.id,
+      title,
+      content
+    });
+
+    setTitle('');
+    setContent('');
+    setIsComposing(false);
+    fetchArticles(); // refresh
+  };
+
+  const handleDelete = async (id) => {
+    if(window.confirm("Tem certeza que deseja excluir este artigo?")) {
+      await supabase.from('articles').delete().eq('id', id);
+      setReadingArticle(null);
+      fetchArticles();
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans pb-20 pt-8">
+      
+      <main className="max-w-4xl mx-auto px-4">
+        <div className="mb-6">
+          <Link to="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-orange-500 transition-colors">
+            <ArrowLeft size={20} />
+            <span className="font-medium">Voltar para o Feed</span>
+          </Link>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+          <h1 className="text-3xl font-bold flex items-center gap-3">
+            <BookOpen className="text-orange-500" size={32} />
+            <span className="bg-gradient-to-r from-orange-400 to-rose-400 bg-clip-text text-transparent">
+              Blog / Artigos
+            </span>
+          </h1>
+          
+          {!isComposing && !readingArticle && (
+            <button 
+              onClick={() => setIsComposing(true)}
+              className="bg-orange-600 hover:bg-orange-500 text-white px-5 py-2.5 rounded-full font-medium transition flex items-center gap-2 shadow-lg shadow-orange-500/20"
+            >
+              <FileText size={18} />
+              <span className="hidden sm:inline">Escrever Artigo</span>
+            </button>
+          )}
+        </div>
+
+        <AnimatePresence mode="wait">
+          {isComposing ? (
+            <motion.div 
+              key="compose"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="glass-card p-6"
+            >
+              <div className="flex justify-between items-center mb-6 border-b border-slate-700/50 pb-4">
+                <h2 className="text-xl font-bold text-slate-100">Novo Artigo</h2>
+                <button onClick={() => setIsComposing(false)} className="p-2 text-slate-400 hover:text-white bg-slate-800 rounded-full transition">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <input
+                  type="text"
+                  placeholder="Título do seu artigo..."
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-lg font-medium text-slate-100 focus:outline-none focus:border-orange-500 transition"
+                  required
+                />
+                
+                <textarea
+                  placeholder="Escreva seu texto longo aqui..."
+                  value={content}
+                  onChange={e => setContent(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-base text-slate-200 focus:outline-none focus:border-orange-500 transition min-h-[300px] resize-y"
+                  required
+                />
+
+                <div className="flex justify-end pt-4">
+                  <button
+                    type="submit"
+                    disabled={!title.trim() || !content.trim()}
+                    className="bg-orange-600 hover:bg-orange-500 disabled:opacity-50 disabled:cursor-not-allowed text-white px-8 py-3 rounded-xl font-medium transition flex items-center gap-2 shadow-lg shadow-orange-500/20"
+                  >
+                    <span>Publicar Artigo</span>
+                    <Send size={18} />
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          ) : readingArticle ? (
+            <motion.div 
+              key="read"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="glass-card p-8 md:p-12 relative"
+            >
+              <button 
+                onClick={() => setReadingArticle(null)} 
+                className="absolute top-6 right-6 p-2 text-slate-400 hover:text-white bg-slate-800 rounded-full transition"
+              >
+                <X size={20} />
+              </button>
+
+              <h1 className="text-3xl md:text-5xl font-extrabold text-slate-50 mb-6 leading-tight pr-12">
+                {readingArticle.title}
+              </h1>
+              
+              <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-700/50">
+                <img 
+                  src={readingArticle.author?.avatar || 'https://placehold.co/100'} 
+                  alt={readingArticle.author?.name} 
+                  className="w-12 h-12 rounded-full border border-slate-600"
+                />
+                <div>
+                  <h3 className="font-bold text-slate-200">{readingArticle.author?.name || 'Desconhecido'}</h3>
+                  <p className="text-sm text-slate-400 flex items-center gap-2">
+                    <Clock size={14} /> 
+                    {new Date(readingArticle.created_at).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </p>
+                </div>
+                
+                {user.id === readingArticle.author_id && (
+                  <button 
+                    onClick={() => handleDelete(readingArticle.id)}
+                    className="ml-auto text-red-500 hover:text-red-400 flex items-center gap-1 text-sm bg-red-500/10 px-3 py-1.5 rounded-lg transition"
+                  >
+                    <Trash2 size={16} /> Excluir
+                  </button>
+                )}
+              </div>
+
+              <div className="prose prose-invert prose-orange max-w-none text-lg text-slate-300 leading-relaxed whitespace-pre-wrap">
+                {readingArticle.content}
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="list"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid gap-6 md:grid-cols-2"
+            >
+              {articles.length > 0 ? articles.map(article => (
+                <div 
+                  key={article.id} 
+                  onClick={() => setReadingArticle(article)}
+                  className="glass-card p-6 cursor-pointer hover:border-orange-500/50 transition-all group flex flex-col h-full"
+                >
+                  <h2 className="text-xl font-bold text-slate-100 mb-3 group-hover:text-orange-400 transition-colors line-clamp-2">
+                    {article.title}
+                  </h2>
+                  <p className="text-slate-400 mb-6 line-clamp-3 flex-1">
+                    {article.content}
+                  </p>
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-700/50">
+                    <div className="flex items-center gap-2">
+                      <img 
+                        src={article.author?.avatar || 'https://placehold.co/100'} 
+                        className="w-6 h-6 rounded-full border border-slate-700"
+                        alt=""
+                      />
+                      <span className="text-xs text-slate-300">{article.author?.name?.split(' ')[0] || 'User'}</span>
+                    </div>
+                    <span className="text-xs text-slate-500">
+                      {new Date(article.created_at).toLocaleDateString('pt-BR')}
+                    </span>
+                  </div>
+                </div>
+              )) : (
+                <div className="col-span-full py-20 text-center">
+                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-800/50 text-slate-500 mb-4">
+                    <BookOpen size={32} />
+                  </div>
+                  <h3 className="text-xl font-medium text-slate-300 mb-2">Nenhum artigo publicado</h3>
+                  <p className="text-slate-500 max-w-md mx-auto">
+                    Seja o primeiro a compartilhar um texto longo, reflexão ou material didático com a comunidade!
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
+    </div>
+  );
+}

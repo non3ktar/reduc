@@ -7,6 +7,7 @@ import Profile from './pages/Profile';
 import Admin from './pages/Admin';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import Blog from './pages/Blog';
 import { supabase } from './supabase';
 
 export default function App() {
@@ -25,6 +26,14 @@ export default function App() {
       setSession(session);
     });
 
+    // Initialize theme from localStorage
+    const savedTheme = localStorage.getItem('reduc_theme') || 'dark';
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+
     return () => subscription.unsubscribe();
   }, []);
 
@@ -37,6 +46,7 @@ export default function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/" element={session ? <Home user={session.user} /> : <Navigate to="/login" />} />
+        <Route path="/blog" element={session ? <Blog user={session.user} /> : <Navigate to="/login" />} />
         <Route path="/marketplace" element={session ? <Marketplace user={session.user} /> : <Navigate to="/login" />} />
         <Route path="/admin" element={session ? <Admin user={session.user} /> : <Navigate to="/login" />} />
         <Route path="/profile" element={session ? <Profile currentUser={session.user} /> : <Navigate to="/login" />} />
