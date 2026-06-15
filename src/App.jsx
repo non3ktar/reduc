@@ -5,6 +5,8 @@ import Home from './pages/Home';
 import Marketplace from './pages/Marketplace';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
 import { supabase } from './supabase';
 
 export default function App() {
@@ -29,9 +31,11 @@ export default function App() {
   if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-orange-500 font-bold">Carregando Reduc...</div>;
 
   return (
-    <Router>
+    <Router basename="/reduc">
       <Routes>
         <Route path="/login" element={session ? <Navigate to="/" /> : <Login />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
         <Route path="/" element={session ? <Home user={session.user} /> : <Navigate to="/login" />} />
         <Route path="/marketplace" element={session ? <Marketplace user={session.user} /> : <Navigate to="/login" />} />
         <Route path="/admin" element={session ? <Admin user={session.user} /> : <Navigate to="/login" />} />

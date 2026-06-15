@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../supabase';
 import { UserPlus, LogIn } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -121,8 +122,8 @@ export default function Login() {
 
             {/* Footer */}
             <div className="mt-16 pt-8 border-t border-white/10 text-xs text-white/40 flex justify-center md:justify-start gap-4">
-              <a href="#" className="hover:text-white transition-colors">Termos de Uso</a>
-              <a href="#" className="hover:text-white transition-colors">Privacidade</a>
+              <Link to="/terms" className="hover:text-white transition-colors">Termos de Uso</Link>
+              <Link to="/privacy" className="hover:text-white transition-colors">Privacidade</Link>
               <span className="ml-auto">&copy; {new Date().getFullYear()} Reduc</span>
             </div>
           </motion.div>

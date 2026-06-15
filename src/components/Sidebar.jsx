@@ -62,8 +62,8 @@ export default function Sidebar({ currentUser }) {
 
       <div className="mt-8 text-center text-xs text-slate-500 space-y-2 pb-6">
         <div className="flex justify-center gap-4">
-          <a href="#" className="hover:text-slate-800 transition-colors">Termos de Uso</a>
-          <a href="#" className="hover:text-slate-800 transition-colors">Política de Privacidade</a>
+          <Link to="/terms" className="hover:text-slate-800 transition-colors">Termos de Uso</Link>
+          <Link to="/privacy" className="hover:text-slate-800 transition-colors">Política de Privacidade</Link>
         </div>
         <p>&copy; {new Date().getFullYear()} Reduc</p>
       </div>
