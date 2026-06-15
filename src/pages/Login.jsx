@@ -29,6 +29,9 @@ export default function Login() {
             name: name || email.split('@')[0],
             avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`
           });
+          
+          alert("Conta criada com sucesso! 🎉\nVerifique a sua caixa de e-mail para confirmar o cadastro.");
+          setIsLogin(true); // Switch to login tab
         }
       }
     } catch (err) {
