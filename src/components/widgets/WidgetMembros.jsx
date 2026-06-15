@@ -47,34 +47,31 @@ export default function WidgetMembros() {
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="flex flex-wrap gap-3 mt-4">
         {members.map(member => (
           <Link 
             to={`/profile/${member.id}`} 
             key={member.id}
-            className="flex items-center gap-3 p-2 hover:bg-slate-800/50 rounded-xl transition-colors group"
+            className="relative group transition-transform hover:scale-110 hover:z-10"
           >
             <div className="relative">
               <img 
                 src={member.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.email || member.id}`} 
                 alt={member.name} 
-                className="w-10 h-10 rounded-full border border-slate-700 group-hover:border-orange-500 transition-colors object-cover bg-slate-900" 
+                className="w-12 h-12 rounded-full border-2 border-slate-700/50 group-hover:border-orange-500 transition-all object-cover bg-slate-900 shadow-sm" 
               />
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-slate-900 rounded-full"></div>
+              <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-[#fefce8] dark:border-slate-950 rounded-full"></div>
             </div>
             
-            <div className="flex-1 min-w-0">
-              <h4 className="text-sm font-semibold text-slate-200 truncate flex items-center gap-1 group-hover:text-orange-400 transition-colors">
-                {member.name}
-                {member.is_verified && <BadgeCheck size={14} className="fill-blue-500 text-white flex-shrink-0" title="Verificado" />}
-              </h4>
-              <p className="text-xs text-slate-500 truncate">{member.role || 'Professor(a)'}</p>
+            {/* Tooltip Customizado */}
+            <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-slate-900 text-slate-200 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl border border-slate-700 flex items-center gap-1 font-medium">
+              {member.name}
+              {member.is_verified && <BadgeCheck size={12} className="fill-blue-500 text-white" />}
             </div>
-            <ChevronRight size={16} className="text-slate-600 group-hover:text-orange-500 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
           </Link>
         ))}
         {members.length === 0 && (
-          <p className="text-xs text-slate-500 text-center py-4">Carregando membros...</p>
+          <p className="text-xs text-slate-500 text-center py-4 w-full">Carregando membros...</p>
         )}
       </div>
     </motion.div>
