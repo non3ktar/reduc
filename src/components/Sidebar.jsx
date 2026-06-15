@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabase';
 import { availableWidgets } from './widgets/registry';
 import WidgetCustom from './widgets/WidgetCustom';
+import WidgetArtigos from './widgets/WidgetArtigos';
+import WidgetCalendario from './widgets/WidgetCalendario';
 import { AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
@@ -30,6 +32,8 @@ export default function Sidebar({ currentUser }) {
 
   return (
     <aside className="space-y-6 hidden md:block">
+      <WidgetCalendario currentUser={currentUser} isAdmin={isAdmin} />
+      <WidgetArtigos />
       <AnimatePresence>
         {activeWidgets.map(widgetId => {
           const WidgetDefinition = availableWidgets.find(w => w.id === widgetId);
