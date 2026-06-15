@@ -12,8 +12,10 @@ import WidgetLinks from './WidgetLinks';
 import WidgetArtigos from './WidgetArtigos';
 import WidgetCalendario from './WidgetCalendario';
 import WidgetAvisos from './WidgetAvisos';
+import WidgetTarefas from './WidgetTarefas';
 
 export const availableWidgets = [
+  { id: 'tarefas', name: 'Tarefas de Classe', description: 'Crie atividades para os alunos e gerencie as entregas num AVA simples.', component: WidgetTarefas },
   { id: 'avisos', name: 'Mural de Avisos', description: 'Transmite notificações em massa de administradores.', component: WidgetAvisos },
   { id: 'chat', name: 'Chat Global', description: 'Sala de bate-papo em tempo real com todos da plataforma.', component: WidgetChat },
   { id: 'quem-seguir', name: 'Sugestões de Amizade', description: 'Usuários sugeridos para seguir baseados na sua rede.', component: WidgetQuemSeguir },

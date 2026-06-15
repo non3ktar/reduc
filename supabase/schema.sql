@@ -60,3 +60,32 @@ create policy "Custom widgets deletable by owner." on public.custom_widgets for 
 
 -- 4. Enable Realtime on posts
 alter publication supabase_realtime add table public.posts;
+
+-- 5. Tabelas para Tarefas de Classe (Tasks & Submissions)
+create table public.tasks (
+  id uuid default gen_random_uuid() primary key,
+  title text not null,
+  description text,
+  due_date timestamp with time zone,
+  created_by uuid references public.profiles(id) on delete cascade not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create table public.task_submissions (
+  id uuid default gen_random_uuid() primary key,
+  task_id uuid references public.tasks(id) on delete cascade not null,
+  student_id uuid references public.profiles(id) on delete cascade not null,
+  content text not null,
+  grade text,
+  feedback text,
+  submitted_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  unique(task_id, student_id)
+);
+
+alter table public.tasks enable row level security;
+alter table public.task_submissions enable row level security;
+
+create policy "Tasks viewable by everyone." on public.tasks for select using (true);
+create policy "Tasks modifiable by authenticated users." on public.tasks for all using (auth.role() = 'authenticated');
+create policy "Submissions viewable by everyone." on public.task_submissions for select using (true);
+create policy "Submissions modifiable by authenticated users." on public.task_submissions for all using (auth.role() = 'authenticated');
