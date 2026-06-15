@@ -13,7 +13,23 @@ export default function Home({ user }) {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    supabase.from('profiles').select('*').eq('id', user.id).single().then(({ data }) => setUserData(data));
+    const loadProfile = async () => {
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+      if (data) {
+        setUserData(data);
+      } else {
+        const fallbackProfile = {
+          id: user.id,
+          email: user.email,
+          name: user.user_metadata?.name || user.email.split('@')[0],
+          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`
+        };
+        await supabase.from('profiles').insert(fallbackProfile);
+        setUserData(fallbackProfile);
+      }
+    };
+    
+    loadProfile();
     
     const fetchPosts = () => {
       supabase.from('posts').select('*, author:profiles(id, name, avatar)').order('created_at', { ascending: false })
