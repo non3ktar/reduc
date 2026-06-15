@@ -35,7 +35,7 @@ export default function WidgetMembros() {
     <motion.div 
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="glass-card p-5 sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto custom-scrollbar"
+      className="glass-card p-5 relative"
     >
       <div className="flex items-center gap-2 mb-6">
         <div className="p-2 bg-orange-500/20 text-orange-500 rounded-lg">
