@@ -21,10 +21,29 @@ export default function Marketplace({ user }) {
   }, [user.id]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingWidget, setEditingWidget] = useState(null);
   const [customTitle, setCustomTitle] = useState('');
   const [customDesc, setCustomDesc] = useState('');
   const [customUrl, setCustomUrl] = useState('');
   const [customImage, setCustomImage] = useState('');
+
+  const openEditModal = (widget) => {
+    setEditingWidget(widget);
+    setCustomTitle(widget.title);
+    setCustomDesc(widget.description);
+    setCustomUrl(widget.url);
+    setCustomImage(widget.image);
+    setIsModalOpen(true);
+  };
+
+  const openCreateModal = () => {
+    setEditingWidget(null);
+    setCustomTitle('');
+    setCustomDesc('');
+    setCustomUrl('');
+    setCustomImage('');
+    setIsModalOpen(true);
+  };
 
   const toggleWidget = async (widgetId) => {
     let newActive = [...activeWidgets];
@@ -39,25 +58,37 @@ export default function Marketplace({ user }) {
 
   const handleCreateCustom = async (e) => {
     e.preventDefault();
-    const newId = `custom-${Date.now()}`;
-    const newWidget = {
-      id: newId,
-      user_id: user.id,
-      title: customTitle,
-      description: customDesc,
-      url: customUrl,
-      image: customImage || `https://api.dicebear.com/7.x/shapes/svg?seed=${Date.now()}`
-    };
+    if (editingWidget) {
+      const updatedWidget = {
+        title: customTitle,
+        description: customDesc,
+        url: customUrl,
+        image: customImage || `https://api.dicebear.com/7.x/shapes/svg?seed=${Date.now()}`
+      };
+      await supabase.from('custom_widgets').update(updatedWidget).eq('id', editingWidget.id);
+      setCustomWidgets(customWidgets.map(w => w.id === editingWidget.id ? { ...w, ...updatedWidget } : w));
+    } else {
+      const newId = `custom-${Date.now()}`;
+      const newWidget = {
+        id: newId,
+        user_id: user.id,
+        title: customTitle,
+        description: customDesc,
+        url: customUrl,
+        image: customImage || `https://api.dicebear.com/7.x/shapes/svg?seed=${Date.now()}`
+      };
 
-    await supabase.from('custom_widgets').insert(newWidget);
-    setCustomWidgets([...customWidgets, newWidget]);
-    await toggleWidget(newId);
+      await supabase.from('custom_widgets').insert(newWidget);
+      setCustomWidgets([...customWidgets, newWidget]);
+      await toggleWidget(newId);
+    }
     
     setIsModalOpen(false);
     setCustomTitle('');
     setCustomDesc('');
     setCustomUrl('');
     setCustomImage('');
+    setEditingWidget(null);
   };
 
   const deleteCustomWidget = async (widgetId) => {
@@ -74,7 +105,7 @@ export default function Marketplace({ user }) {
         <button onClick={() => navigate('/')} className="flex items-center gap-2 text-slate-400 hover:text-white transition glass px-4 py-2 rounded-full">
           <ArrowLeft size={18} /> Voltar para o Feed
         </button>
-        <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 bg-orange-600 hover:bg-orange-500 text-white font-semibold transition px-5 py-2 rounded-full shadow-lg shadow-orange-500/20">
+        <button onClick={openCreateModal} className="flex items-center gap-2 bg-orange-600 hover:bg-orange-500 text-white font-semibold transition px-5 py-2 rounded-full shadow-lg shadow-orange-500/20">
           <Plus size={18} /> Novo Link Personalizado
         </button>
       </div>
@@ -119,6 +150,9 @@ export default function Marketplace({ user }) {
                   <h3 className="font-bold text-lg text-slate-200">{widget.title}</h3>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button onClick={() => openEditModal(widget)} className="p-2 text-slate-500 hover:text-orange-400 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                  </button>
                   <button onClick={() => deleteCustomWidget(widget.id)} className="p-2 text-slate-500 hover:text-red-400 transition-colors">
                     <Trash2 size={18} />
                   </button>
@@ -146,7 +180,7 @@ export default function Marketplace({ user }) {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></motion.div>
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="glass-card w-full max-w-md p-6 relative z-10">
               <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white"><X size={24} /></button>
-              <h2 className="text-2xl font-bold text-orange-500 mb-6">Novo Link Externo</h2>
+              <h2 className="text-2xl font-bold text-orange-500 mb-6">{editingWidget ? 'Editar Link Externo' : 'Novo Link Externo'}</h2>
               <form onSubmit={handleCreateCustom} className="space-y-4">
                 <div>
                   <label className="block text-xs text-slate-400 mb-1 uppercase font-bold tracking-wide">Título do App</label>
@@ -165,7 +199,7 @@ export default function Marketplace({ user }) {
                   <input type="url" value={customImage} onChange={e => setCustomImage(e.target.value)} placeholder="https://.../icone.png" className="glass-input w-full" />
                 </div>
                 <button type="submit" className="w-full bg-orange-600 hover:bg-orange-500 text-white font-semibold py-3 rounded-xl transition-colors shadow-lg shadow-orange-500/30 mt-4">
-                  Adicionar ao Marketplace
+                  {editingWidget ? 'Salvar Alterações' : 'Adicionar ao Marketplace'}
                 </button>
               </form>
             </motion.div>
