@@ -8,9 +8,10 @@ import WidgetAvisos from './widgets/WidgetAvisos';
 import WidgetTarefas from './widgets/WidgetTarefas';
 import WidgetNoticias from './widgets/WidgetNoticias';
 import { AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Sidebar({ currentUser, className = 'hidden md:block' }) {
+  const navigate = useNavigate();
   const [activeWidgets, setActiveWidgets] = useState(['quem-seguir']);
   const [customWidgets, setCustomWidgets] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -53,7 +54,7 @@ export default function Sidebar({ currentUser, className = 'hidden md:block' }) 
   }, [currentUser]);
 
   return (
-    <aside className={`sticky top-24 h-[calc(100vh-7rem)] overflow-y-auto no-scrollbar space-y-6 pb-6 ${className}`}>
+    <aside className={`sticky top-24 h-[calc(100vh-7rem)] overflow-y-auto no-scrollbar space-y-6 pb-24 md:pb-6 ${className}`}>
       <WidgetCalendario currentUser={currentUser} isAdmin={isAdmin} />
       <WidgetNoticias currentUser={currentUser} isAdmin={isAdmin} />
       <WidgetAvisos />
@@ -81,12 +82,12 @@ export default function Sidebar({ currentUser, className = 'hidden md:block' }) 
         <p className="text-xs text-slate-400 mb-4">Adicione ou remova widgets do seu painel lateral.</p>
         {isAdmin && (
           <>
-            <Link to="/marketplace" className="w-full bg-slate-800/80 hover:bg-slate-700 text-center text-slate-300 hover:text-white px-4 py-2 rounded-xl transition block border border-slate-600/50 shadow-lg mb-3">
+            <button onClick={() => navigate('/marketplace')} className="w-full bg-slate-800/80 hover:bg-slate-700 text-center text-slate-300 hover:text-white px-4 py-2 rounded-xl transition block border border-slate-600/50 shadow-lg mb-3">
               Gerenciar Widgets
-            </Link>
-            <Link to="/admin" className="w-full bg-red-900/20 hover:bg-red-900/40 text-center text-red-400 hover:text-red-300 px-4 py-2 rounded-xl transition block border border-red-900/50 shadow-lg">
+            </button>
+            <button onClick={() => navigate('/admin')} className="w-full bg-red-900/20 hover:bg-red-900/40 text-center text-red-400 hover:text-red-300 px-4 py-2 rounded-xl transition block border border-red-900/50 shadow-lg">
               Área do Admin
-            </Link>
+            </button>
           </>
         )}
       </div>
