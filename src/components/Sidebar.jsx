@@ -6,6 +6,7 @@ import WidgetArtigos from './widgets/WidgetArtigos';
 import WidgetCalendario from './widgets/WidgetCalendario';
 import WidgetAvisos from './widgets/WidgetAvisos';
 import WidgetTarefas from './widgets/WidgetTarefas';
+import WidgetNoticias from './widgets/WidgetNoticias';
 import { AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
@@ -52,13 +53,14 @@ export default function Sidebar({ currentUser }) {
   }, [currentUser]);
 
   return (
-    <aside className="space-y-6 hidden md:block">
+    <aside className="hidden md:block sticky top-24 h-[calc(100vh-7rem)] overflow-y-auto no-scrollbar space-y-6 pb-6">
+      <WidgetCalendario currentUser={currentUser} isAdmin={isAdmin} />
+      <WidgetNoticias currentUser={currentUser} isAdmin={isAdmin} />
       <WidgetAvisos />
       <WidgetTarefas currentUser={currentUser} isAdmin={isAdmin} />
-      <WidgetCalendario currentUser={currentUser} isAdmin={isAdmin} />
       <WidgetArtigos isAdmin={isAdmin} />
       <AnimatePresence>
-        {activeWidgets.map(widgetId => {
+        {activeWidgets.filter(id => !['quem-seguir', 'aniversarios', 'calendario', 'noticias', 'avisos', 'tarefas'].includes(id)).map(widgetId => {
           const WidgetDefinition = availableWidgets.find(w => w.id === widgetId);
           if (WidgetDefinition) {
             const WidgetComponent = WidgetDefinition.component;

@@ -5,7 +5,8 @@ import Post from '../components/Post';
 import Sidebar from '../components/Sidebar';
 import ThemeToggle from '../components/ThemeToggle';
 import WidgetMembros from '../components/widgets/WidgetMembros';
-import WidgetNoticias from '../components/widgets/WidgetNoticias';
+import WidgetQuemSeguir from '../components/widgets/WidgetQuemSeguir';
+import WidgetAniversarios from '../components/widgets/WidgetAniversarios';
 import WidgetVideoDestaque from '../components/widgets/WidgetVideoDestaque';
 import { LogOut, Home as HomeIcon, Bell, MessageCircle, BookOpen, BadgeCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -96,9 +97,10 @@ export default function Home({ user }) {
 
       <main className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-[minmax(0,600px)_320px] lg:grid-cols-[280px_minmax(0,600px)_320px] justify-center gap-6">
         {/* Left Sidebar (Desktop Only) */}
-        <aside className="hidden lg:block space-y-6">
-          <WidgetNoticias currentUser={userData} isAdmin={userData?.is_admin} />
+        <aside className="hidden lg:block sticky top-24 h-[calc(100vh-7rem)] overflow-y-auto no-scrollbar space-y-6 pb-6">
           <WidgetMembros />
+          <WidgetQuemSeguir currentUser={userData} isAdmin={userData?.is_admin} />
+          <WidgetAniversarios currentUser={userData} isAdmin={userData?.is_admin} />
         </aside>
 
         <div className="space-y-6">
