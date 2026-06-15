@@ -8,10 +8,16 @@ import { Link } from 'react-router-dom';
 export default function Sidebar({ currentUser }) {
   const [activeWidgets, setActiveWidgets] = useState(['quem-seguir']);
   const [customWidgets, setCustomWidgets] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (!currentUser) return;
     
+    // Check if user is admin
+    supabase.from('profiles').select('is_admin').eq('id', currentUser.id).single().then(({ data }) => {
+      if (data && data.is_admin) setIsAdmin(true);
+    });
+
     supabase.from('user_settings').select('active_widgets').eq('user_id', currentUser.id).single().then(({ data }) => {
       if (data && data.active_widgets) setActiveWidgets(data.active_widgets);
     });
@@ -47,9 +53,11 @@ export default function Sidebar({ currentUser }) {
         <Link to="/marketplace" className="w-full bg-slate-800/80 hover:bg-slate-700 text-center text-slate-300 hover:text-white px-4 py-2 rounded-xl transition block border border-slate-600/50 shadow-lg mb-3">
           Gerenciar Widgets
         </Link>
-        <Link to="/admin" className="w-full bg-red-900/20 hover:bg-red-900/40 text-center text-red-400 hover:text-red-300 px-4 py-2 rounded-xl transition block border border-red-900/50 shadow-lg">
-          Área do Admin
-        </Link>
+        {isAdmin && (
+          <Link to="/admin" className="w-full bg-red-900/20 hover:bg-red-900/40 text-center text-red-400 hover:text-red-300 px-4 py-2 rounded-xl transition block border border-red-900/50 shadow-lg">
+            Área do Admin
+          </Link>
+        )}
       </div>
 
       <div className="mt-8 text-center text-xs text-slate-500 space-y-2 pb-6">
