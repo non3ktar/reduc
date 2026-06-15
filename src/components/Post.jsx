@@ -7,6 +7,14 @@ import { Link } from 'react-router-dom';
 export default function Post({ post, currentUser }) {
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState('');
+  const [showMenu, setShowMenu] = useState(false);
+
+  const handleDelete = async () => {
+    if (window.confirm("Tem certeza que deseja excluir esta publicação?")) {
+      await supabase.from('posts').delete().eq('id', post.id);
+      setShowMenu(false);
+    }
+  };
 
   const author = post.author || { name: 'Desconhecido', avatar: 'https://placehold.co/100', id: post.user_id };
 
@@ -81,9 +89,34 @@ export default function Post({ post, currentUser }) {
               <p className="text-xs text-slate-400">{date}</p>
             </div>
           </Link>
-          <button className="text-slate-500 hover:text-slate-300">
-            <MoreHorizontal size={20} />
-          </button>
+          <div className="relative">
+            <button 
+              onClick={() => setShowMenu(!showMenu)} 
+              className="text-slate-500 hover:text-slate-800 transition"
+            >
+              <MoreHorizontal size={20} />
+            </button>
+            
+            {showMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-black/10 shadow-xl rounded-xl overflow-hidden z-20">
+                {currentUser?.id === post.user_id ? (
+                  <button 
+                    onClick={handleDelete}
+                    className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 font-medium transition-colors"
+                  >
+                    Excluir publicação
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => { alert('Denúncia enviada aos moderadores.'); setShowMenu(false); }}
+                    className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                  >
+                    Denunciar
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {post.content && (
