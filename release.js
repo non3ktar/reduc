@@ -42,15 +42,19 @@ try {
   console.log("📱 Gerando o novo APK...");
   execSync('bash ~/.gemini/gerar_apk.sh', { stdio: 'inherit' });
 
-  // 8. Movendo o APK para a pasta dist
-  console.log("📂 Movendo o APK para a pasta dist...");
-  execSync('cp reduca-debug.apk dist/reduca-latest.apk', { stdio: 'inherit' });
+  // 8. Movendo o APK para a pasta public temporariamente para o deploy
+  console.log("📂 Movendo o APK para a pasta public...");
+  execSync('cp reduca-debug.apk public/reduca-latest.apk', { stdio: 'inherit' });
 
   // 9. Fazendo o deploy para o GitHub Pages
   console.log("☁️ Fazendo o Deploy para o GitHub Pages...");
   execSync('npm run deploy', { stdio: 'inherit' });
 
-  // 10. Comitando e subindo as alterações (opcional, mas recomendado)
+  // 10. Limpando o APK da pasta public para não inchar o próximo build Android
+  console.log("🧹 Limpando o APK temporário...");
+  execSync('rm public/reduca-latest.apk', { stdio: 'inherit' });
+
+  // 11. Comitando e subindo as alterações
   console.log("💾 Salvando o código no GitHub...");
   execSync('git add .', { stdio: 'inherit' });
   execSync(`git commit -m "chore: release version ${versionData.version}"`, { stdio: 'inherit' });
