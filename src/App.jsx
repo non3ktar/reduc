@@ -18,6 +18,7 @@ import { Capacitor } from '@capacitor/core';
 export default function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState(localStorage.getItem('reduc_theme') || 'dark');
 
   usePushNotifications(session?.user);
 
