@@ -88,11 +88,13 @@ export default function Home({ user }) {
                 </span>
                 <img src={userData.avatar} alt="Avatar" className="w-8 h-8 rounded-full border border-orange-500/50 group-hover:border-orange-500" />
               </Link>
-              <AppDrawer />
               <ThemeToggle />
               <button onClick={handleLogout} className="text-red-400 hover:text-red-300 ml-2" title="Sair">
                 <LogOut size={20} />
               </button>
+              <div className="ml-2 pl-4 border-l border-slate-700/50 flex items-center">
+                <AppDrawer />
+              </div>
             </div>
           </div>
         </div>

@@ -43,7 +43,7 @@ export default function AppDrawer() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-12 right-0 w-80 glass-card p-4 shadow-2xl z-50 border border-slate-700/50"
+            className="absolute top-12 right-0 w-80 glass-card !bg-opacity-95 p-4 shadow-2xl z-50 border border-slate-700/50"
           >
             <h3 className="text-sm font-bold text-slate-300 mb-4 px-2">Apps da Reduca</h3>
             
