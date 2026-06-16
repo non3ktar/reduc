@@ -136,7 +136,7 @@ export default function Home({ user }) {
         </aside>
 
         <div className={`space-y-6 ${mobileTab === 'feed' ? 'block' : 'hidden'} md:block`}>
-          <div className="md:hidden flex justify-between items-center mb-6 glass-card p-4">
+          <div className="md:hidden flex justify-between items-center mb-6 glass-card p-4 relative z-50">
              <Link to="/profile" className="flex items-center gap-3 hover:opacity-80 transition">
                 <img src={userData.avatar} alt="Avatar" className="w-10 h-10 rounded-full border-2 border-orange-500" />
                 <div>
