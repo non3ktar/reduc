@@ -277,7 +277,7 @@ export default function Admin({ user }) {
                   <input 
                     type="text" required
                     value={newWidget.title} onChange={e => setNewWidget({...newWidget, title: e.target.value})}
-                    className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full glass-input"
                     placeholder="Ex: Diário Escolar Oficial"
                   />
                 </div>
@@ -286,7 +286,7 @@ export default function Admin({ user }) {
                   <input 
                     type="url" required
                     value={newWidget.url} onChange={e => setNewWidget({...newWidget, url: e.target.value})}
-                    className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full glass-input"
                     placeholder="https://..."
                   />
                 </div>
@@ -295,12 +295,12 @@ export default function Admin({ user }) {
                   <input 
                     type="text" 
                     value={newWidget.description} onChange={e => setNewWidget({...newWidget, description: e.target.value})}
-                    className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full glass-input"
                     placeholder="Link oficial para os professores..."
                   />
                 </div>
                 <div className="flex gap-3 pt-4">
-                  <button type="button" onClick={() => setShowWidgetModal(false)} className="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-xl transition">
+                  <button type="button" onClick={() => setShowWidgetModal(false)} className="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-50 font-medium rounded-xl transition">
                     Cancelar
                   </button>
                   <button type="submit" className="flex-1 py-3 px-4 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl transition">
@@ -365,32 +365,32 @@ export default function Admin({ user }) {
               <form onSubmit={handleCreateApp} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-400 mb-1">Nome do App *</label>
-                  <input type="text" required value={newApp.name} onChange={e => setNewApp({...newApp, name: e.target.value})} className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                  <input type="text" required value={newApp.name} onChange={e => setNewApp({...newApp, name: e.target.value})} className="w-full glass-input !py-2" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-400 mb-1">URL do Ícone (Imagem) *</label>
-                  <input type="url" required value={newApp.icon_url} onChange={e => setNewApp({...newApp, icon_url: e.target.value})} className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                  <input type="url" required value={newApp.icon_url} onChange={e => setNewApp({...newApp, icon_url: e.target.value})} className="w-full glass-input !py-2" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-400 mb-1">Descrição</label>
-                  <input type="text" value={newApp.description} onChange={e => setNewApp({...newApp, description: e.target.value})} className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                  <input type="text" value={newApp.description} onChange={e => setNewApp({...newApp, description: e.target.value})} className="w-full glass-input !py-2" />
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   <div>
                     <label className="block text-[10px] text-slate-400 mb-1">Link Web</label>
-                    <input type="url" value={newApp.link_web} onChange={e => setNewApp({...newApp, link_web: e.target.value})} className="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-2 py-1 text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <input type="url" value={newApp.link_web} onChange={e => setNewApp({...newApp, link_web: e.target.value})} className="w-full glass-input !rounded-lg !px-2 !py-1 !text-xs" />
                   </div>
                   <div>
                     <label className="block text-[10px] text-slate-400 mb-1">Link APK</label>
-                    <input type="url" value={newApp.link_apk} onChange={e => setNewApp({...newApp, link_apk: e.target.value})} className="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-2 py-1 text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <input type="url" value={newApp.link_apk} onChange={e => setNewApp({...newApp, link_apk: e.target.value})} className="w-full glass-input !rounded-lg !px-2 !py-1 !text-xs" />
                   </div>
                   <div>
                     <label className="block text-[10px] text-slate-400 mb-1">Link Desktop</label>
-                    <input type="url" value={newApp.link_desktop} onChange={e => setNewApp({...newApp, link_desktop: e.target.value})} className="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-2 py-1 text-white text-xs focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <input type="url" value={newApp.link_desktop} onChange={e => setNewApp({...newApp, link_desktop: e.target.value})} className="w-full glass-input !rounded-lg !px-2 !py-1 !text-xs" />
                   </div>
                 </div>
                 <div className="flex gap-3 pt-4">
-                  <button type="button" onClick={() => setShowAppModal(false)} className="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-xl transition">Cancelar</button>
+                  <button type="button" onClick={() => setShowAppModal(false)} className="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-50 font-medium rounded-xl transition">Cancelar</button>
                   <button type="submit" className="flex-1 py-3 px-4 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl transition">Salvar App</button>
                 </div>
               </form>
