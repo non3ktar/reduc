@@ -42,9 +42,9 @@ try {
   console.log("📱 Gerando o novo APK...");
   execSync('bash ~/.gemini/gerar_apk.sh', { stdio: 'inherit' });
 
-  // 8. Movendo o APK para a pasta public
-  console.log("📂 Movendo o APK para a pasta public...");
-  execSync('cp teach-and-learn-modern-debug.apk public/reduca-latest.apk', { stdio: 'inherit' });
+  // 8. Movendo o APK para a pasta dist
+  console.log("📂 Movendo o APK para a pasta dist...");
+  execSync('cp reduca-debug.apk dist/reduca-latest.apk', { stdio: 'inherit' });
 
   // 9. Fazendo o deploy para o GitHub Pages
   console.log("☁️ Fazendo o Deploy para o GitHub Pages...");
