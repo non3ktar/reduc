@@ -21,7 +21,7 @@ export default function Terms() {
         <section>
           <h2 className="text-xl font-bold mb-3">1. Aceitação dos Termos</h2>
           <p>
-            Ao acessar e utilizar a plataforma Reduc, você concorda em cumprir e estar vinculado a estes Termos de Uso.
+            Ao acessar e utilizar a plataforma Reduca, você concorda em cumprir e estar vinculado a estes Termos de Uso.
             Se você não concordar com qualquer parte destes termos, não deverá utilizar nossos serviços.
           </p>
         </section>
@@ -40,7 +40,7 @@ export default function Terms() {
         <section>
           <h2 className="text-xl font-bold mb-3">3. Conteúdo do Usuário</h2>
           <p>
-            Você mantém todos os direitos sobre o conteúdo que publica na Reduc. No entanto, ao postar, 
+            Você mantém todos os direitos sobre o conteúdo que publica na Reduca. No entanto, ao postar, 
             você nos concede uma licença não exclusiva para hospedar, exibir e distribuir seu conteúdo dentro da plataforma.
             A moderação da plataforma reserva-se o direito de remover qualquer conteúdo que viole nossas diretrizes.
           </p>
@@ -58,7 +58,7 @@ export default function Terms() {
         <section>
           <h2 className="text-xl font-bold mb-3">5. Limitação de Responsabilidade</h2>
           <p>
-            A Reduc é fornecida "como está", sem garantias de qualquer tipo. Não nos responsabilizamos por 
+            A Reduca é fornecida "como está", sem garantias de qualquer tipo. Não nos responsabilizamos por 
             perdas de dados, interrupções de serviço ou ações de terceiros dentro da rede.
           </p>
         </section>

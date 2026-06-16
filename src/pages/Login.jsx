@@ -88,7 +88,7 @@ export default function Login() {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <h1 className="text-7xl md:text-9xl font-serif font-black tracking-tighter text-white mb-6 drop-shadow-2xl">
-              Reduc
+              Reduca
             </h1>
             <p className="text-xl md:text-3xl font-light tracking-wide max-w-lg text-white/90 drop-shadow-lg leading-relaxed">
               Onde a educação e o futuro se conectam.
@@ -182,7 +182,7 @@ export default function Login() {
             <div className="mt-16 pt-8 border-t border-slate-700/50 text-xs text-slate-500 flex justify-center md:justify-start gap-4">
               <Link to="/terms" className="hover:text-slate-50 transition-colors">Termos de Uso</Link>
               <Link to="/privacy" className="hover:text-slate-50 transition-colors">Privacidade</Link>
-              <span className="ml-auto">&copy; {new Date().getFullYear()} Reduc</span>
+              <span className="ml-auto">&copy; {new Date().getFullYear()} Reduca</span>
             </div>
           </motion.div>
         </div>

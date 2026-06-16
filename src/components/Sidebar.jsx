@@ -97,7 +97,7 @@ export default function Sidebar({ currentUser, className = 'hidden md:block' }) 
           <Link to="/terms" className="hover:text-slate-800 transition-colors">Termos de Uso</Link>
           <Link to="/privacy" className="hover:text-slate-800 transition-colors">Política de Privacidade</Link>
         </div>
-        <p>&copy; {new Date().getFullYear()} Reduc</p>
+        <p>&copy; {new Date().getFullYear()} Reduca</p>
       </div>
     </aside>
   );

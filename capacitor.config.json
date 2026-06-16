@@ -1,6 +1,6 @@
 {
   "appId": "com.escola.reduc",
-  "appName": "Reduc",
+  "appName": "Reduca",
   "webDir": "dist",
   "plugins": {
     "PushNotifications": {

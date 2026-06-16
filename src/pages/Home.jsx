@@ -64,7 +64,7 @@ export default function Home({ user }) {
       {/* Navbar Desktop */}
       <nav className="fixed top-0 w-full glass z-50 hidden md:block">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold text-orange-500 hover:opacity-80 transition">Reduc</Link>
+          <Link to="/" className="text-2xl font-bold text-orange-500 hover:opacity-80 transition">Reduca</Link>
           <div className="flex items-center gap-6">
             <Link to="/" className="text-orange-500 hover:text-orange-400 transition-colors"><HomeIcon size={24} /></Link>
             <Link to="/blog" className="text-slate-300 hover:text-orange-400 transition-colors"><BookOpen size={24} /></Link>

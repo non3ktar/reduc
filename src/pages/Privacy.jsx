@@ -22,7 +22,7 @@ export default function Privacy() {
           <h2 className="text-xl font-bold mb-3">1. Coleta de Dados</h2>
           <p>
             Coletamos as informações que você nos fornece diretamente, como seu nome, endereço de e-mail 
-            e o conteúdo que você cria ou compartilha (posts, comentários, widgets) ao utilizar a Reduc.
+            e o conteúdo que você cria ou compartilha (posts, comentários, widgets) ao utilizar a Reduca.
           </p>
         </section>
 
