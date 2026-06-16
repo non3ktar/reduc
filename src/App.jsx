@@ -47,7 +47,7 @@ export default function App() {
 
   if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-orange-500 font-bold">Carregando Reduca...</div>;
 
-  const routerBasename = Capacitor.isNativePlatform() ? "" : "/reduca";
+  const routerBasename = "";
 
   return (
     <div className="min-h-screen transition-colors duration-300 relative text-[var(--text-primary)]">

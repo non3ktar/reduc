@@ -9,9 +9,7 @@ export default function AutoUpdater() {
   const [showModal, setShowModal] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
 
-  // This should match the URL where you host version.json
-  // If hosted on GitHub Pages alongside the app:
-  const VERSION_URL = 'https://non3ktar.github.io/reduca/version.json';
+  const VERSION_URL = 'https://reduca.zonaeducacional.org/version.json';
 
   useEffect(() => {
     // Only run on native Android/iOS
