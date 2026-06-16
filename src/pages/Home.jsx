@@ -121,6 +121,7 @@ export default function Home({ user }) {
                 </div>
              </Link>
              <div className="flex gap-2 items-center">
+               <div className="pr-1"><AppDrawer /></div>
                <ThemeToggle />
                <button onClick={handleLogout} className="text-red-400 p-2 glass rounded-full" title="Sair">
                   <LogOut size={20} />
