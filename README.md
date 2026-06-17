@@ -1,7 +1,7 @@
 # Reduca (Antigo Teach&Learn Modernizado)
 
 ## 📌 Project Goal
-A **Reduca** é uma plataforma educacional e rede social focada em "Vibe Coding" e alta interação, desenhada para professores, gestores e alunos. O projeto evoluiu de um antigo front-end estático para uma PWA/APK moderna com backend em nuvem, notificações em tempo real e inteligência artificial embarcada.
+A **Reduca** é uma plataforma educacional é rede social desenhada para professores, gestores e alunos. O projeto evoluiu de um antigo front-end estático para uma PWA/APK moderna com backend em nuvem, notificações em tempo real e inteligência artificial embarcada.
 
 ## 🛠 Tech Stack
 - **Framework Front-end:** Vite + React
