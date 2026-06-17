@@ -55,7 +55,7 @@ export default function App() {
   const routerBasename = "";
 
   return (
-    <div className="min-h-screen transition-colors duration-300 relative text-[var(--text-primary)]">
+    <div className="min-h-screen transition-colors duration-300 relative text-[var(--text-primary)] overflow-x-hidden w-full">
       <Router basename={routerBasename}>
         <ScrollToTop />
         <Routes>

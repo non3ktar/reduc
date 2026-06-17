@@ -19,7 +19,7 @@ export default function WidgetEscambo() {
       });
   }, []);
 
-  if (error || items.length === 0) return null;
+  if (error) return null;
 
   return (
     <motion.div 
@@ -38,9 +38,14 @@ export default function WidgetEscambo() {
         <Link to="/escambo" className="text-xs text-green-500 hover:text-green-400 font-bold transition">Ver Todos</Link>
       </div>
       
-      <div className="space-y-4">
-        {items.map(item => (
-          <Link to="/escambo" key={item.id} className="flex items-center gap-3 group">
+      {items.length === 0 ? (
+        <div className="text-center text-slate-500 py-6 text-sm">
+          Nenhum item anunciado no escambo ainda.
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {items.map(item => (
+            <Link to="/escambo" key={item.id} className="flex items-center gap-3 group">
             <div className="flex-1 min-w-0">
               <h4 className="text-sm font-semibold text-[var(--text-primary)] truncate group-hover:text-green-400 transition-colors">
                 {item.title}
@@ -56,6 +61,7 @@ export default function WidgetEscambo() {
           </Link>
         ))}
       </div>
+      )}
     </motion.div>
   );
 }

@@ -127,7 +127,7 @@ export default function Post({ post, currentUser }) {
         </div>
 
         {post.content && (
-          <p className="text-slate-200 mb-4 whitespace-pre-wrap">{post.content}</p>
+          <p className="text-slate-200 mb-4 whitespace-pre-wrap break-words">{post.content}</p>
         )}
       </div>
 
