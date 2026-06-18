@@ -8,6 +8,7 @@ import WidgetTarefas from './widgets/WidgetTarefas';
 import WidgetNoticias from './widgets/WidgetNoticias';
 import { AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
+import { Smartphone, Download } from 'lucide-react';
 
 export default function Sidebar({ currentUser, className = 'hidden md:block' }) {
   const navigate = useNavigate();
@@ -78,6 +79,31 @@ export default function Sidebar({ currentUser, className = 'hidden md:block' }) 
           return null;
         })}
       </AnimatePresence>
+
+      {/* App Download Banner */}
+      <div className="glass-card p-5 border border-orange-500/30 bg-gradient-to-br from-orange-500/10 to-amber-500/5 relative overflow-hidden group mb-4">
+        <div className="absolute -right-6 -top-6 w-24 h-24 bg-orange-500/20 rounded-full blur-2xl group-hover:bg-orange-500/30 transition-all duration-500"></div>
+        <div className="flex items-start gap-4 relative z-10">
+          <div className="p-3 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl shadow-lg shadow-orange-500/20 text-white shrink-0">
+            <Smartphone size={24} />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-slate-50 mb-1">Baixe o Aplicativo</h3>
+            <p className="text-xs text-slate-400 leading-relaxed mb-3">
+              Tenha o Reduca no seu celular Android para notificações e acesso rápido.
+            </p>
+            <a 
+              href="https://reduca.zonaeducacional.org/reduca-latest.apk" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs font-bold text-white bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg transition-colors border border-slate-700/50"
+            >
+              <Download size={14} className="text-orange-500" />
+              Baixar APK
+            </a>
+          </div>
+        </div>
+      </div>
 
       <div className="glass-card p-5 border border-slate-700/50">
         <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Marketplace</h3>
