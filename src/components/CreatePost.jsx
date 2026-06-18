@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../supabase';
-import { ImagePlus, Send, SmilePlus, BarChart2, X, Plus, Trash2, Loader2, Sparkles, Bot } from 'lucide-react';
+import { ImagePlus, Send, SmilePlus, BarChart2, X, Plus, Trash2, Loader2, Sparkles, Bot, Search, Video, Image as ImageIcon, Film } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import * as nsfwjs from 'nsfwjs';
 import { generatePostFromTopic } from '../ai';
 
 const COMMON_EMOJIS = ['👍','😂','❤️','😍','😊','🔥','💡','🚀','🙌','🤔','👏','🎉','💯','👀','📚','✏️'];
@@ -10,7 +9,6 @@ const COMMON_EMOJIS = ['👍','😂','❤️','😍','😊','🔥','💡','🚀'
 export default function CreatePost({ user, groupId = null }) {
   const [content, setContent] = useState('');
   const [image, setImage] = useState(null);
-  const [isCheckingImage, setIsCheckingImage] = useState(false);
   
   // Emoji State
   const [showEmojis, setShowEmojis] = useState(false);
@@ -25,6 +23,21 @@ export default function CreatePost({ user, groupId = null }) {
   const [aiTopic, setAiTopic] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const [showPixabay, setShowPixabay] = useState(false);
+  const [pixabayQuery, setPixabayQuery] = useState('');
+  const [pixabayResults, setPixabayResults] = useState([]);
+  const [pixabayType, setPixabayType] = useState('image');
+  const [isSearchingMedia, setIsSearchingMedia] = useState(false);
+  const PIXABAY_API_KEY = "25211-7a7bd55d7391fa61b9252a565";
+
+  // Giphy State
+  const [showGiphy, setShowGiphy] = useState(false);
+  const [giphyQuery, setGiphyQuery] = useState('');
+  const [giphyResults, setGiphyResults] = useState([]);
+  const [isSearchingGiphy, setIsSearchingGiphy] = useState(false);
+  const GIPHY_API_KEY = "tjrfigQsvMciYmIhgk4bJ8STRCponzE5";
+
+
   const textareaRef = useRef(null);
 
   useEffect(() => {
@@ -34,69 +47,12 @@ export default function CreatePost({ user, groupId = null }) {
     }
   }, [content]);
 
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Bloqueio inicial se o arquivo for absurdamente grande (maior que 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('A imagem é muito pesada! Escolha uma de até 5MB.');
-        return;
-      }
-
-      setIsCheckingImage(true);
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-      img.crossOrigin = "anonymous";
-      
-      img.onload = async () => {
-        try {
-          const model = await nsfwjs.load();
-          const predictions = await model.classify(img);
-          
-          const nsfwClasses = ['Porn', 'Hentai', 'Sexy'];
-          const isNsfw = predictions.some(p => nsfwClasses.includes(p.className) && p.probability > 0.6);
-          
-          if (isNsfw) {
-            alert('🚫 Imagem bloqueada pelo filtro de segurança da Reduca (Conteúdo impróprio detectado).');
-            setImage(null);
-          } else {
-            // Compressão client-side inteligente
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 1200; 
-            const MAX_HEIGHT = 1200;
-            let width = img.width;
-            let height = img.height;
-
-            if (width > height) {
-              if (width > MAX_WIDTH) {
-                height = Math.round(height * (MAX_WIDTH / width));
-                width = MAX_WIDTH;
-              }
-            } else {
-              if (height > MAX_HEIGHT) {
-                width = Math.round(width * (MAX_HEIGHT / height));
-                height = MAX_HEIGHT;
-              }
-            }
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            
-            // Converte para JPEG com 70% de qualidade para ficar minúsculo
-            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7); 
-            setImage(compressedDataUrl);
-          }
-        } catch (error) {
-          console.error('Erro na IA:', error);
-          alert('Erro ao analisar a imagem. Tente enviar novamente.');
-        } finally {
-          setIsCheckingImage(false);
-          URL.revokeObjectURL(img.src);
-        }
-      };
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
     }
-  };
+  }, [content]);
 
   const addEmoji = (emoji) => {
     setContent(prev => prev + emoji);
@@ -134,6 +90,45 @@ export default function CreatePost({ user, groupId = null }) {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handlePixabaySearch = async () => {
+    if (!pixabayQuery.trim()) return;
+    setIsSearchingMedia(true);
+    try {
+      let url = '';
+      if (pixabayType === 'video') {
+        url = `https://pixabay.com/api/videos/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(pixabayQuery)}&per_page=12&lang=pt`;
+      } else {
+        url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(pixabayQuery)}&image_type=photo&orientation=horizontal&per_page=12&lang=pt`;
+      }
+      const res = await fetch(url);
+      const data = await res.json();
+      setPixabayResults(data.hits || []);
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao buscar mídia no Pixabay.');
+    }
+    setIsSearchingMedia(false);
+  };
+
+  const handleGiphySearch = async () => {
+    if (!giphyQuery.trim()) return;
+    setIsSearchingGiphy(true);
+    try {
+      const url = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(giphyQuery)}&limit=12&lang=pt`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.data) {
+        setGiphyResults(data.data);
+      } else {
+        alert("Erro na API do Giphy. Verifique sua API Key.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro de conexão ao buscar GIFs.");
+    }
+    setIsSearchingGiphy(false);
   };
 
   const handleSubmit = async (e) => {
@@ -181,7 +176,11 @@ export default function CreatePost({ user, groupId = null }) {
         
         {image && (
           <div className="relative mb-4">
-            <img src={image} alt="Preview" className="rounded-xl max-h-64 object-cover w-full" />
+            {image.includes('.mp4') ? (
+              <video src={image} controls autoPlay muted loop playsInline className="rounded-xl max-h-64 object-cover w-full bg-black border border-slate-700/50" />
+            ) : (
+              <img src={image} alt="Preview" className="rounded-xl max-h-64 object-cover w-full border border-slate-700/50" />
+            )}
             <button
               type="button"
               onClick={() => setImage(null)}
@@ -265,37 +264,152 @@ export default function CreatePost({ user, groupId = null }) {
               </div>
             </motion.div>
           )}
+
+          {showPixabay && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-4 bg-slate-900/80 p-4 rounded-xl border border-slate-700/50 overflow-hidden shadow-lg">
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="text-sm font-bold text-orange-400 flex items-center gap-2"><Search size={16} /> Buscar Mídia</h4>
+                <button type="button" onClick={() => setShowPixabay(false)} className="text-slate-500 hover:text-white">
+                  <X size={16} />
+                </button>
+              </div>
+              
+              <div className="flex items-center gap-2 mb-3">
+                <button type="button" onClick={() => {setPixabayType('image'); setPixabayResults([]);}} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${pixabayType === 'image' ? 'bg-orange-500 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>
+                  <ImageIcon size={14} /> Imagens
+                </button>
+                <button type="button" onClick={() => {setPixabayType('video'); setPixabayResults([]);}} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${pixabayType === 'video' ? 'bg-blue-500 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>
+                  <Video size={14} /> Vídeos
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2 mb-3">
+                <input 
+                  type="text" 
+                  placeholder={pixabayType === 'image' ? "Ex: tecnologia, abstrato..." : "Ex: natureza, universo..."} 
+                  value={pixabayQuery}
+                  onChange={e => setPixabayQuery(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handlePixabaySearch(); } }}
+                  className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 text-slate-200"
+                />
+                <button 
+                  type="button" 
+                  onClick={handlePixabaySearch} 
+                  disabled={isSearchingMedia || !pixabayQuery.trim()}
+                  className="bg-orange-600 hover:bg-orange-500 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-bold transition flex items-center justify-center min-w-[80px]"
+                >
+                  {isSearchingMedia ? <Loader2 size={16} className="animate-spin" /> : 'Buscar'}
+                </button>
+              </div>
+
+              {pixabayResults.length > 0 && (
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
+                  {pixabayResults.map(res => (
+                    <div 
+                      key={res.id} 
+                      onClick={() => {
+                        const url = pixabayType === 'video' ? res.videos?.tiny?.url : res.largeImageURL;
+                        if (url) setImage(url);
+                        setShowPixabay(false);
+                      }}
+                      className="relative h-20 bg-slate-800 rounded-lg overflow-hidden cursor-pointer hover:ring-2 hover:ring-orange-500 transition group"
+                    >
+                      <img 
+                        src={pixabayType === 'video' ? res.videos?.tiny?.thumbnail : res.webformatURL} 
+                        className="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
+                        alt="preview"
+                      />
+                      {pixabayType === 'video' && <div className="absolute inset-0 flex items-center justify-center bg-black/30"><Video size={20} className="text-white drop-shadow-md" /></div>}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {showGiphy && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-4 bg-slate-900/80 p-4 rounded-xl border border-slate-700/50 overflow-hidden shadow-lg">
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="text-sm font-bold text-pink-400 flex items-center gap-2"><Film size={16} /> Buscar GIF (Giphy)</h4>
+                <button type="button" onClick={() => setShowGiphy(false)} className="text-slate-500 hover:text-white">
+                  <X size={16} />
+                </button>
+              </div>
+              
+              <div className="flex items-center gap-2 mb-3">
+                <input 
+                  type="text" 
+                  placeholder="Ex: feliz, parabéns, estudando..." 
+                  value={giphyQuery}
+                  onChange={e => setGiphyQuery(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleGiphySearch(); } }}
+                  className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pink-500 text-slate-200"
+                />
+                <button 
+                  type="button" 
+                  onClick={handleGiphySearch} 
+                  disabled={isSearchingGiphy || !giphyQuery.trim()}
+                  className="bg-pink-600 hover:bg-pink-500 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-bold transition flex items-center justify-center min-w-[80px]"
+                >
+                  {isSearchingGiphy ? <Loader2 size={16} className="animate-spin" /> : 'Buscar'}
+                </button>
+              </div>
+
+              {giphyResults.length > 0 && (
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
+                  {giphyResults.map(gif => (
+                    <div 
+                      key={gif.id} 
+                      onClick={() => {
+                        setImage(gif.images.original.url);
+                        setShowGiphy(false);
+                      }}
+                      className="relative h-20 bg-slate-800 rounded-lg overflow-hidden cursor-pointer hover:ring-2 hover:ring-pink-500 transition group"
+                    >
+                      <img 
+                        src={gif.images.fixed_height_small.url} 
+                        className="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
+                        alt={gif.title}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
         </AnimatePresence>
 
-        <div className="flex items-center justify-between pt-3 border-t border-slate-700/50 relative">
-          <div className="flex items-center gap-2">
-            <label className={`cursor-pointer text-orange-400 hover:text-orange-300 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-800/50 ${isCheckingImage ? 'opacity-50 pointer-events-none' : ''}`}>
-              {isCheckingImage ? <Loader2 size={20} className="animate-spin" /> : <ImagePlus size={20} />}
-              <span className="text-sm font-medium hidden sm:inline">
-                {isCheckingImage ? 'Analisando...' : 'Foto'}
-              </span>
-              <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} disabled={isCheckingImage} />
-            </label>
-
-            <button type="button" onClick={() => setShowPoll(!showPoll)} className={`text-orange-400 hover:text-orange-300 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-800/50 ${showPoll ? 'bg-slate-800/50' : ''}`}>
-              <BarChart2 size={20} />
-              <span className="text-sm font-medium hidden sm:inline">Enquete</span>
+        <div className="flex flex-wrap items-center justify-between gap-y-3 pt-3 border-t border-slate-700/50 relative z-10">
+          <div className="flex flex-wrap items-center gap-1 sm:gap-2 flex-1">
+            <button type="button" onClick={() => setShowPixabay(!showPixabay)} className={`text-blue-400 hover:text-blue-300 transition flex items-center gap-1.5 px-2 sm:px-3 py-2 rounded-lg hover:bg-slate-800/50 ${showPixabay ? 'bg-slate-800/50' : ''}`} title="Buscar Mídia (Pixabay)">
+              <Search size={20} />
+              <span className="text-sm font-medium hidden lg:inline">Pixabay</span>
             </button>
 
-            <button type="button" onClick={() => setShowAI(!showAI)} className={`text-indigo-400 hover:text-indigo-300 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-800/50 ${showAI ? 'bg-slate-800/50' : ''}`} title="Gerar com IA">
+            <button type="button" onClick={() => setShowGiphy(!showGiphy)} className={`text-pink-400 hover:text-pink-300 transition flex items-center gap-1.5 px-2 sm:px-3 py-2 rounded-lg hover:bg-slate-800/50 ${showGiphy ? 'bg-slate-800/50' : ''}`} title="Buscar GIF (Giphy)">
+              <Film size={20} />
+              <span className="text-sm font-medium hidden lg:inline">GIF</span>
+            </button>
+
+            <button type="button" onClick={() => setShowPoll(!showPoll)} className={`text-orange-400 hover:text-orange-300 transition flex items-center gap-1.5 px-2 sm:px-3 py-2 rounded-lg hover:bg-slate-800/50 ${showPoll ? 'bg-slate-800/50' : ''}`}>
+              <BarChart2 size={20} />
+              <span className="text-sm font-medium hidden lg:inline">Enquete</span>
+            </button>
+
+            <button type="button" onClick={() => setShowAI(!showAI)} className={`text-indigo-400 hover:text-indigo-300 transition flex items-center gap-1.5 px-2 sm:px-3 py-2 rounded-lg hover:bg-slate-800/50 ${showAI ? 'bg-slate-800/50' : ''}`} title="Gerar com IA">
               <Sparkles size={20} />
-              <span className="text-sm font-medium hidden sm:inline">IA</span>
+              <span className="text-sm font-medium hidden lg:inline">IA</span>
             </button>
 
             <div className="relative">
-              <button type="button" onClick={() => setShowEmojis(!showEmojis)} className="text-orange-400 hover:text-orange-300 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-800/50">
+              <button type="button" onClick={() => setShowEmojis(!showEmojis)} className="text-orange-400 hover:text-orange-300 transition flex items-center gap-1.5 px-2 sm:px-3 py-2 rounded-lg hover:bg-slate-800/50">
                 <SmilePlus size={20} />
-                <span className="text-sm font-medium hidden sm:inline">Emoji</span>
+                <span className="text-sm font-medium hidden lg:inline">Emoji</span>
               </button>
               
               <AnimatePresence>
                 {showEmojis && (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute bottom-full left-0 mb-2 bg-slate-900 border border-slate-700 p-3 rounded-xl shadow-xl w-64 z-50 grid grid-cols-4 gap-2">
+                  <motion.div initial={{ opacity: 0, y: 10, x: '-50%' }} animate={{ opacity: 1, y: 0, x: '-50%' }} exit={{ opacity: 0, y: 10, x: '-50%' }} className="absolute bottom-full left-1/2 mb-2 bg-slate-900 border border-slate-700 p-3 rounded-xl shadow-2xl w-[280px] z-50 grid grid-cols-4 gap-2">
                     {COMMON_EMOJIS.map((emoji, idx) => (
                       <button key={idx} type="button" onClick={() => addEmoji(emoji)} className="text-2xl hover:bg-slate-800 rounded-lg p-1 transition transform hover:scale-110">
                         {emoji}
@@ -309,11 +423,11 @@ export default function CreatePost({ user, groupId = null }) {
 
           <button
             type="submit"
-            disabled={isCheckingImage || (!content.trim() && !image && !showPoll) || (showPoll && (pollQuestion.trim() === '' || pollOptions.filter(o => o.trim() !== '').length < 2))}
-            className="bg-orange-600 hover:bg-orange-500 disabled:opacity-50 disabled:cursor-not-allowed text-white px-5 py-2 rounded-full font-medium transition flex items-center gap-2 shadow-lg shadow-orange-500/20"
+            title="Publicar"
+            disabled={(!content.trim() && !image && !showPoll) || (showPoll && (pollQuestion.trim() === '' || pollOptions.filter(o => o.trim() !== '').length < 2))}
+            className="bg-orange-600 hover:bg-orange-500 disabled:opacity-50 disabled:cursor-not-allowed text-white p-3.5 rounded-full font-medium transition flex items-center justify-center shadow-lg shadow-orange-500/20 shrink-0 ml-auto"
           >
-            <span>Publicar</span>
-            <Send size={16} />
+            <Send size={18} className="-ml-0.5" />
           </button>
         </div>
       </form>

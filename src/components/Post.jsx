@@ -132,7 +132,11 @@ export default function Post({ post, currentUser }) {
       </div>
 
       {post.image && (
-        <img src={post.image} alt="Post content" className="w-full max-h-96 object-cover border-y border-slate-700/50" />
+        post.image.includes('.mp4') ? (
+          <video src={post.image} controls autoPlay muted loop playsInline className="w-full max-h-[500px] object-cover bg-black border-y border-slate-700/50" />
+        ) : (
+          <img src={post.image} alt="Post content" className="w-full max-h-[500px] object-cover border-y border-slate-700/50" />
+        )
       )}
 
       {post.poll_data && (

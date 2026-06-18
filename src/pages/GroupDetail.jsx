@@ -7,6 +7,7 @@ import AppDrawer from '../components/AppDrawer';
 import Sidebar from '../components/Sidebar';
 import CreatePost from '../components/CreatePost';
 import Post from '../components/Post';
+import CoverPicker from '../components/CoverPicker';
 
 export default function GroupDetail({ user }) {
   const { id } = useParams();
@@ -284,19 +285,12 @@ export default function GroupDetail({ user }) {
                   rows={3}
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Capa (URL da Imagem)</label>
-                <div className="flex relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <ImageIcon size={18} className="text-slate-500" />
-                  </div>
-                  <input 
-                    type="url" 
-                    value={editForm.cover_image}
-                    onChange={e => setEditForm({...editForm, cover_image: e.target.value})}
-                    className="glass-input w-full rounded-xl pl-10 pr-4 py-2.5"
-                  />
-                </div>
+              <div className="pb-2">
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Capa do Grupo</label>
+                <CoverPicker 
+                  currentCover={editForm.cover_image}
+                  onSelectCover={(url) => setEditForm({...editForm, cover_image: url})}
+                />
               </div>
               <div className="flex gap-3 pt-2">
                 <button 

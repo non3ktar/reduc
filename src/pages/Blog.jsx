@@ -3,12 +3,14 @@ import { supabase } from '../supabase';
 import { BookOpen, FileText, Send, X, Clock, User, Trash2, ArrowLeft, Share2, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import CoverPicker from '../components/CoverPicker';
 
 export default function Blog({ user }) {
   const [articles, setArticles] = useState([]);
   const [isComposing, setIsComposing] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [coverImage, setCoverImage] = useState('');
   const [readingArticle, setReadingArticle] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [userData, setUserData] = useState(null);
@@ -44,11 +46,13 @@ export default function Blog({ user }) {
     await supabase.from('articles').insert({
       author_id: user.id,
       title,
-      content
+      content,
+      cover_image: coverImage
     });
 
     setTitle('');
     setContent('');
+    setCoverImage('');
     setIsComposing(false);
     fetchArticles(); // refresh
   };
@@ -143,6 +147,14 @@ export default function Blog({ user }) {
                   required
                 />
                 
+                <div className="pb-2">
+                  <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Capa do Artigo (Opcional)</label>
+                  <CoverPicker 
+                    currentCover={coverImage}
+                    onSelectCover={(url) => setCoverImage(url)}
+                  />
+                </div>
+                
                 <textarea
                   placeholder="Escreva seu texto longo aqui..."
                   value={content}
@@ -177,6 +189,13 @@ export default function Blog({ user }) {
               >
                 <X size={20} />
               </button>
+
+              {readingArticle.cover_image && (
+                <div className="w-full h-64 md:h-80 mb-8 rounded-2xl overflow-hidden shadow-2xl border border-slate-700/50 relative">
+                  <img src={readingArticle.cover_image} alt={readingArticle.title} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                </div>
+              )}
 
               <h1 className="text-3xl md:text-5xl font-extrabold text-slate-50 mb-6 leading-tight pr-12">
                 {readingArticle.title}
@@ -250,9 +269,15 @@ export default function Blog({ user }) {
                 <div 
                   key={article.id} 
                   onClick={() => setReadingArticle(article)}
-                  className="glass-card p-6 cursor-pointer hover:border-orange-500/50 transition-all group flex flex-col h-full"
+                  className="glass-card cursor-pointer hover:border-orange-500/50 transition-all group flex flex-col h-full overflow-hidden"
                 >
-                  <h2 className="text-xl font-bold text-slate-100 mb-3 group-hover:text-orange-400 transition-colors line-clamp-2 flex items-start justify-between gap-2">
+                  {article.cover_image && (
+                    <div className="h-32 w-full bg-slate-800 overflow-hidden">
+                      <img src={article.cover_image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                  )}
+                  <div className="p-6 flex flex-col flex-1">
+                    <h2 className="text-xl font-bold text-slate-100 mb-3 group-hover:text-orange-400 transition-colors line-clamp-2 flex items-start justify-between gap-2">
                     {article.title}
                     {favorites.includes(article.id) && (
                       <Heart size={16} className="text-rose-400 fill-rose-400 shrink-0 mt-1" />
@@ -273,6 +298,7 @@ export default function Blog({ user }) {
                     <span className="text-xs text-slate-500">
                       {new Date(article.created_at).toLocaleDateString('pt-BR')}
                     </span>
+                  </div>
                   </div>
                 </div>
               )) : (

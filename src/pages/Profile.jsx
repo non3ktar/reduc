@@ -5,6 +5,7 @@ import { ArrowLeft, Edit3, MapPin, Briefcase, Calendar, X, BadgeCheck, Trophy, M
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from '../components/ThemeToggle';
 import Post from '../components/Post';
+import CoverPicker from '../components/CoverPicker';
 
 export default function Profile({ currentUser }) {
   const { id } = useParams();
@@ -105,7 +106,12 @@ export default function Profile({ currentUser }) {
 
       {/* Header Profile */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card overflow-hidden mb-8 border border-slate-700/50">
-        <div className={`h-48 ${coverThemes.find(t => t.id === (profileUser.cover_image || 'default'))?.className || coverThemes[0].className} relative transition-colors duration-500`}>
+        <div className="h-48 relative overflow-hidden bg-slate-800">
+          {profileUser.cover_image && profileUser.cover_image.startsWith('http') ? (
+            <img src={profileUser.cover_image} alt="Capa" className="w-full h-full object-cover" />
+          ) : (
+            <div className={`absolute inset-0 ${coverThemes.find(t => t.id === (profileUser.cover_image || 'default'))?.className || coverThemes[0].className} transition-colors duration-500`} />
+          )}
           {isOwnProfile && (
             <button 
               onClick={handleEditClick}
@@ -248,18 +254,11 @@ export default function Profile({ currentUser }) {
                 </div>
                 
                 <div>
-                  <label className="block text-xs text-slate-400 mb-2 uppercase font-bold tracking-wide">Tema da Capa</label>
-                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                    {coverThemes.map(theme => (
-                      <button
-                        key={theme.id}
-                        type="button"
-                        onClick={() => setEditCover(theme.id)}
-                        className={`h-10 rounded-lg border-2 transition-all ${theme.className} ${editCover === theme.id ? 'border-white scale-105 shadow-lg' : 'border-transparent opacity-60 hover:opacity-100'}`}
-                        title={theme.label}
-                      ></button>
-                    ))}
-                  </div>
+                  <label className="block text-xs text-slate-400 mb-2 uppercase font-bold tracking-wide">Capa Profissional</label>
+                  <CoverPicker 
+                    currentCover={editCover}
+                    onSelectCover={(url) => setEditCover(url)}
+                  />
                 </div>
                 
                 <button type="submit" className="w-full bg-orange-600 hover:bg-orange-500 text-white font-semibold py-3 rounded-xl transition-colors shadow-lg shadow-orange-500/30 mt-4">

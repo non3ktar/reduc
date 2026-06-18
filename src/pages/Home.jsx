@@ -12,6 +12,7 @@ import WidgetForum from '../components/widgets/WidgetForum';
 import WidgetArtigos from '../components/widgets/WidgetArtigos';
 import WidgetEscambo from '../components/widgets/WidgetEscambo';
 import WidgetVideoDestaque from '../components/widgets/WidgetVideoDestaque';
+import WidgetAudiobook from '../components/widgets/WidgetAudiobook';
 import { LogOut, Home as HomeIcon, Bell, MessageCircle, BookOpen, BadgeCheck, Users, CalendarDays, RefreshCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import AppDrawer from '../components/AppDrawer';
@@ -138,6 +139,7 @@ export default function Home({ user }) {
       <main className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-[minmax(0,600px)_320px] lg:grid-cols-[280px_minmax(0,600px)_320px] justify-center gap-6">
         {/* Left Sidebar (Desktop & Mobile "pessoas" tab) */}
         <aside className={`lg:block space-y-4 pb-6 lg:h-fit lg:sticky lg:bottom-4 ${mobileTab === 'pessoas' ? 'block' : 'hidden'}`}>
+          <WidgetAudiobook currentUser={userData} isAdmin={userData?.is_admin} />
           <WidgetMembros />
           <WidgetEscambo />
           <WidgetGrupos />
