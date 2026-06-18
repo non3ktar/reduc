@@ -26,6 +26,8 @@ export default function Profile({ currentUser }) {
   const [editCover, setEditCover] = useState('default');
   const [editBio, setEditBio] = useState('');
   const [editHideBirthdate, setEditHideBirthdate] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(true);
 
   const coverThemes = [
     { id: 'default', label: 'Laranja e Roxo', className: 'bg-gradient-to-r from-orange-600 to-purple-600' },
@@ -46,7 +48,33 @@ export default function Profile({ currentUser }) {
     supabase.from('posts').select('*, author:profiles(id, name, avatar)').eq('user_id', targetId).order('created_at', { ascending: false }).then(({ data }) => {
       setUserPosts(data || []);
     });
-  }, [targetId]);
+
+    if (currentUser && targetId !== currentUser.id) {
+      supabase.from('follows').select('*').eq('follower_id', currentUser.id).eq('following_id', targetId).single().then(({ data }) => {
+        setIsFollowing(!!data);
+        setFollowLoading(false);
+      }).catch(() => {
+        setFollowLoading(false);
+      });
+    } else {
+      setFollowLoading(false);
+    }
+  }, [targetId, currentUser]);
+
+  const handleFollowToggle = async () => {
+    if (followLoading || !currentUser) return;
+    const newStatus = !isFollowing;
+    setIsFollowing(newStatus); // Optimistic UI
+
+    if (newStatus) {
+      await supabase.from('follows').insert({ follower_id: currentUser.id, following_id: targetId });
+    } else {
+      await supabase.from('follows')
+        .delete()
+        .eq('follower_id', currentUser.id)
+        .eq('following_id', targetId);
+    }
+  };
 
   const handleEditClick = () => {
     if (profileUser) {
@@ -133,8 +161,16 @@ export default function Profile({ currentUser }) {
               className="w-32 h-32 rounded-full border-4 border-slate-900 object-cover bg-slate-800 shadow-xl" 
             />
             {!isOwnProfile && (
-              <button className="bg-orange-600 hover:bg-orange-500 text-white px-8 py-2.5 rounded-full font-bold shadow-lg shadow-orange-500/20 transition">
-                Seguir
+              <button 
+                onClick={handleFollowToggle}
+                disabled={followLoading}
+                className={`px-8 py-2.5 rounded-full font-bold shadow-lg transition ${
+                  isFollowing 
+                    ? 'bg-slate-700 hover:bg-red-500 hover:text-white text-white shadow-slate-900/20'
+                    : 'bg-orange-600 hover:bg-orange-500 text-white shadow-orange-500/20'
+                }`}
+              >
+                {isFollowing ? 'Seguindo' : 'Seguir'}
               </button>
             )}
           </div>
