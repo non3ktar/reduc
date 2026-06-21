@@ -265,7 +265,16 @@ export default function Admin({ user }) {
         {/* Tab: Usuários */}
         {activeTab === 'usuarios' && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-slate-50 mb-4">Usuários Cadastrados ({usersList.length})</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-slate-50">Usuários Cadastrados ({usersList.length})</h2>
+              <button 
+                onClick={handleExportUsersCSV}
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-bold transition-colors shadow-lg shadow-indigo-600/20"
+              >
+                <Download size={18} />
+                Exportar E-mails CSV
+              </button>
+            </div>
             <div className="glass-card overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
