@@ -21,7 +21,7 @@ serve(async (req) => {
     if (action === 'generateContent') {
       const { prompt } = payload
       
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ serve(async (req) => {
 
       const systemInstruction = 'Você é o "Assistente Reduca", um assistente virtual para ajudar professores, alunos e gestores na rede social educacional Reduca. Seja amigável, prestativo e use uma linguagem clara.'
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

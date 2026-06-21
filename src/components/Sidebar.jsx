@@ -6,6 +6,7 @@ import WidgetCalendario from './widgets/WidgetCalendario';
 import WidgetAvisos from './widgets/WidgetAvisos';
 import WidgetTarefas from './widgets/WidgetTarefas';
 import WidgetNoticias from './widgets/WidgetNoticias';
+import WidgetLibriVox from './widgets/WidgetLibriVox';
 import { AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Smartphone, Download } from 'lucide-react';
@@ -61,6 +62,7 @@ export default function Sidebar({ currentUser, className = 'hidden md:block' }) 
     <aside className={`space-y-4 pb-24 md:pb-6 ${className}`}>
       <WidgetCalendario currentUser={userProfile} isAdmin={isAdmin} />
       <WidgetNoticias currentUser={userProfile} isAdmin={isAdmin} />
+      <WidgetLibriVox />
       <WidgetAvisos />
       <WidgetTarefas currentUser={userProfile} isAdmin={isAdmin} />
       <AnimatePresence>
