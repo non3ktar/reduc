@@ -99,8 +99,8 @@ export default function Admin({ user }) {
 
   const handleExportCSV = () => {
     if (leads.length === 0) return;
-    const headers = ['Nome,Email,WhatsApp,Data'];
-    const rows = leads.map(l => `${l.name || ''},${l.email || ''},${l.whatsapp || ''},${l.created_at ? new Date(l.created_at).toLocaleDateString() : ''}`);
+    const headers = ['FIRSTNAME;EMAIL;WHATSAPP;DATE'];
+    const rows = leads.map(l => `${l.name || ''};${l.email || ''};${l.whatsapp || ''};${l.created_at ? new Date(l.created_at).toLocaleDateString() : ''}`);
     const csvContent = headers.concat(rows).join("\r\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -115,8 +115,8 @@ export default function Admin({ user }) {
 
   const handleExportUsersCSV = () => {
     if (usersList.length === 0) return;
-    const headers = ['Nome,Email,Status,Data'];
-    const rows = usersList.map(u => `${u.name || ''},${u.email || ''},${u.is_admin ? 'Admin' : 'Membro'},${u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A'}`);
+    const headers = ['FIRSTNAME;EMAIL;STATUS;DATE'];
+    const rows = usersList.map(u => `${u.name || ''};${u.email || ''};${u.is_admin ? 'Admin' : 'Membro'};${u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A'}`);
     const csvContent = headers.concat(rows).join("\r\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
