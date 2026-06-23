@@ -50,3 +50,26 @@ export const chatWithAI = async (message, history = []) => {
     throw new Error(`Erro da IA: ${error.message}`);
   }
 };
+
+export const generateContent = async (prompt) => {
+  try {
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/ai-proxy`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        action: 'generateContent',
+        payload: { prompt }
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Erro na API');
+    return data.text || "";
+  } catch (error) {
+    console.error('Erro na chamada da IA:', error);
+    throw new Error(`Erro da IA: ${error.message}`);
+  }
+};
