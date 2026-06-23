@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
-import { BookOpen, FileText, Send, X, Clock, User, Trash2, ArrowLeft, Share2, Heart } from 'lucide-react';
+import { BookOpen, FileText, Send, X, Clock, User, Trash2, ArrowLeft, Share2, Heart, Sparkles, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import CoverPicker from '../components/CoverPicker';
+import { generateContent } from '../ai';
 
 export default function Blog({ user }) {
   const [articles, setArticles] = useState([]);
@@ -14,6 +15,8 @@ export default function Blog({ user }) {
   const [readingArticle, setReadingArticle] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [aiSummary, setAiSummary] = useState(null);
+  const [isSummarizing, setIsSummarizing] = useState(false);
 
   useEffect(() => {
     fetchUserData();
@@ -61,6 +64,8 @@ export default function Blog({ user }) {
     if(window.confirm("Tem certeza que deseja excluir este artigo?")) {
       await supabase.from('articles').delete().eq('id', id);
       setReadingArticle(null);
+      setAiSummary(null);
+      setIsSummarizing(false);
       fetchArticles();
     }
   };
@@ -76,6 +81,20 @@ export default function Blog({ user }) {
       alert("Artigo compartilhado no seu Feed com sucesso!");
     } else {
       alert("Erro ao compartilhar artigo.");
+    }
+  };
+
+  const handleSummarize = async () => {
+    if (!readingArticle || isSummarizing) return;
+    setIsSummarizing(true);
+    try {
+      const prompt = `Você é um assistente educacional da plataforma Reduca. Resuma o seguinte artigo de forma clara e em tópicos. Mantenha o tom profissional, direto e em português do Brasil. O resumo deve extrair as ideias principais de forma rápida e engajadora:\n\nTítulo: ${readingArticle.title}\n\nTexto:\n${readingArticle.content}`;
+      const summary = await generateContent(prompt);
+      setAiSummary(summary);
+    } catch (err) {
+      alert("Erro ao gerar resumo da IA.");
+    } finally {
+      setIsSummarizing(false);
     }
   };
 
@@ -184,7 +203,7 @@ export default function Blog({ user }) {
               className="glass-card p-8 md:p-12 relative"
             >
               <button 
-                onClick={() => setReadingArticle(null)} 
+                onClick={() => { setReadingArticle(null); setAiSummary(null); setIsSummarizing(false); }} 
                 className="absolute top-6 right-6 p-2 text-slate-400 hover:text-white bg-slate-800 rounded-full transition"
               >
                 <X size={20} />
@@ -226,6 +245,44 @@ export default function Blog({ user }) {
                     </button>
                   )}
                 </div>
+              </div>
+
+              {/* AI Summary Section */}
+              <div className="mb-10">
+                {!aiSummary && !isSummarizing && (
+                  <button 
+                    onClick={handleSummarize}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white transition shadow-lg shadow-purple-500/20 w-max"
+                  >
+                    <Sparkles size={18} />
+                    Resumir com IA
+                  </button>
+                )}
+                
+                {isSummarizing && (
+                  <div className="glass-card p-6 flex items-center gap-4 border-purple-500/30 bg-purple-500/5">
+                    <Loader2 className="animate-spin text-purple-400" size={24} />
+                    <span className="text-purple-300 font-medium">A Inteligência Artificial está lendo e resumindo o artigo para você...</span>
+                  </div>
+                )}
+
+                {aiSummary && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="glass-card p-6 border-purple-500/30 bg-purple-500/5 relative overflow-hidden shadow-2xl shadow-purple-900/20"
+                  >
+                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                      <Sparkles size={64} className="text-purple-500" />
+                    </div>
+                    <h3 className="flex items-center gap-2 text-lg font-bold text-purple-400 mb-4">
+                      <Sparkles size={20} /> Resumo Inteligente
+                    </h3>
+                    <div className="prose prose-invert max-w-none text-slate-200 leading-relaxed text-sm sm:text-base">
+                      <div className="whitespace-pre-wrap font-medium">{aiSummary}</div>
+                    </div>
+                  </motion.div>
+                )}
               </div>
 
               <div className="prose prose-invert prose-orange max-w-none text-lg text-slate-300 leading-relaxed whitespace-pre-wrap mb-12">

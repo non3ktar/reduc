@@ -13,7 +13,7 @@ export default function Escambo({ user }) {
   
   // Modal state
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ title: '', description: '', type: 'Troca', image: null });
+  const [formData, setFormData] = useState({ title: '', description: '', type: 'Troca' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -40,16 +40,7 @@ export default function Escambo({ user }) {
     }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, image: reader.result });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,11 +53,10 @@ export default function Escambo({ user }) {
         title: formData.title,
         description: formData.description,
         type: formData.type,
-        image_url: formData.image,
         status: 'Disponível'
       });
       setShowModal(false);
-      setFormData({ title: '', description: '', type: 'Troca', image: null });
+      setFormData({ title: '', description: '', type: 'Troca' });
       fetchItems();
     } catch (e) {
       alert("Erro ao criar item. O banco de dados pode não estar configurado.");
@@ -150,14 +140,10 @@ export default function Escambo({ user }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {items.map(item => (
               <div key={item.id} className="glass-card overflow-hidden group border border-slate-700/50 hover:border-green-500/50 transition-all">
-                <div className="relative h-48 bg-slate-800">
-                  {item.image_url ? (
-                    <img src={item.image_url} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Box size={48} className="text-slate-600" />
-                    </div>
-                  )}
+                <div className="relative h-32 bg-gradient-to-br from-slate-800 to-slate-900 border-b border-slate-700/50">
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Box size={40} className="text-slate-600/50" />
+                  </div>
                   <div className="absolute top-3 left-3 flex gap-2">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-lg backdrop-blur-md ${item.type === 'Doação' ? 'bg-indigo-500/80 text-white' : 'bg-green-500/80 text-white'}`}>
                       {item.type === 'Doação' ? <HeartHandshake size={12} className="inline mr-1" /> : <RefreshCcw size={12} className="inline mr-1" />}
@@ -237,21 +223,7 @@ export default function Escambo({ user }) {
                   <textarea required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="glass-input w-full rounded-xl px-4 py-3 text-[var(--text-primary)] h-24 resize-none" placeholder="Descreva o estado do item, o que você aceita em troca, etc." />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Foto (Opcional)</label>
-                  {formData.image ? (
-                    <div className="relative h-32 rounded-xl overflow-hidden">
-                      <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
-                      <button type="button" onClick={() => setFormData({...formData, image: null})} className="absolute top-2 right-2 bg-slate-900/80 p-1.5 rounded-full text-white hover:text-red-400"><X size={16} /></button>
-                    </div>
-                  ) : (
-                    <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-slate-700/50 rounded-xl cursor-pointer hover:border-green-500/50 hover:bg-slate-800/30 transition">
-                      <ImagePlus size={32} className="text-slate-500 mb-2" />
-                      <span className="text-sm text-slate-400">Clique para adicionar foto</span>
-                      <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-                    </label>
-                  )}
-                </div>
+
 
                 <button type="submit" disabled={isSubmitting} className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl transition flex justify-center items-center gap-2 mt-6">
                   {isSubmitting ? <Loader2 className="animate-spin" size={20} /> : <Check size={20} />} Publicar Anúncio

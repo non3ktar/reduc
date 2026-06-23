@@ -50,14 +50,27 @@ export default function Home({ user }) {
       supabase.from('posts').select('*, author:profiles(id, name, avatar, is_verified)')
         .is('group_id', null)
         .order('created_at', { ascending: false })
+        .limit(50)
         .then(({ data }) => setPosts(data || []));
     };
     
     fetchPosts();
 
     const channel = supabase.channel('realtime-posts')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, payload => {
-        fetchPosts();
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, async payload => {
+        if (payload.eventType === 'INSERT') {
+          const { data: newPost } = await supabase.from('posts')
+            .select('*, author:profiles(id, name, avatar, is_verified)')
+            .eq('id', payload.new.id)
+            .single();
+          if (newPost && !newPost.group_id) {
+            setPosts(current => [newPost, ...current]);
+          }
+        } else if (payload.eventType === 'UPDATE') {
+          setPosts(current => current.map(p => p.id === payload.new.id ? { ...p, ...payload.new } : p));
+        } else if (payload.eventType === 'DELETE') {
+          setPosts(current => current.filter(p => p.id !== payload.old.id));
+        }
       })
       .subscribe();
 

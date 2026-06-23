@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Marketplace from './pages/Marketplace';
@@ -20,6 +20,49 @@ import OnboardingModal from './components/OnboardingModal';
 import { supabase } from './supabase';
 import { usePushNotifications } from './hooks/usePushNotifications';
 import { Capacitor } from '@capacitor/core';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const PageTransition = ({ children }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+      className="w-full"
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+function AnimatedRoutes({ session }) {
+  const location = useLocation();
+  
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+          <Route path="/login" element={<PageTransition>{!session ? <Login /> : <Navigate to="/" />}</PageTransition>} />
+          <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
+          <Route path="/privacy" element={<PageTransition><Privacy /></PageTransition>} />
+          
+          {/* Protected Routes */}
+          <Route path="/" element={<PageTransition>{session ? <Home user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
+          <Route path="/blog" element={<PageTransition>{session ? <Blog user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
+          <Route path="/marketplace" element={<PageTransition>{session ? <Marketplace user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
+          <Route path="/apps" element={<PageTransition>{session ? <Apps /> : <Navigate to="/login" />}</PageTransition>} />
+          <Route path="/admin" element={<PageTransition>{session ? <Admin user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
+          <Route path="/groups" element={<PageTransition>{session ? <Groups user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
+          <Route path="/groups/:id" element={<PageTransition>{session ? <GroupDetail user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
+          <Route path="/escambo" element={<PageTransition>{session ? <Escambo user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
+          <Route path="/forum" element={<PageTransition>{session ? <Forum user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
+          <Route path="/forum/:id" element={<PageTransition>{session ? <ForumTopic user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
+          <Route path="/profile" element={<PageTransition>{session ? <Profile currentUser={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
+          <Route path="/profile/:id" element={<PageTransition>{session ? <Profile currentUser={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -59,25 +102,7 @@ export default function App() {
     <div className="min-h-screen transition-colors duration-300 relative text-[var(--text-primary)] overflow-x-hidden w-full">
       <Router basename={routerBasename}>
         <ScrollToTop />
-        <Routes>
-          <Route path="/login" element={!session ? <Login /> : <Navigate to="/" />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/privacy" element={<Privacy />} />
-          
-          {/* Protected Routes */}
-          <Route path="/" element={session ? <Home user={session.user} /> : <Navigate to="/login" />} />
-          <Route path="/blog" element={session ? <Blog user={session.user} /> : <Navigate to="/login" />} />
-          <Route path="/marketplace" element={session ? <Marketplace user={session.user} /> : <Navigate to="/login" />} />
-          <Route path="/apps" element={session ? <Apps /> : <Navigate to="/login" />} />
-          <Route path="/admin" element={session ? <Admin user={session.user} /> : <Navigate to="/login" />} />
-          <Route path="/groups" element={session ? <Groups user={session.user} /> : <Navigate to="/login" />} />
-          <Route path="/groups/:id" element={session ? <GroupDetail user={session.user} /> : <Navigate to="/login" />} />
-          <Route path="/escambo" element={session ? <Escambo user={session.user} /> : <Navigate to="/login" />} />
-          <Route path="/forum" element={session ? <Forum user={session.user} /> : <Navigate to="/login" />} />
-          <Route path="/forum/:id" element={session ? <ForumTopic user={session.user} /> : <Navigate to="/login" />} />
-          <Route path="/profile" element={session ? <Profile currentUser={session.user} /> : <Navigate to="/login" />} />
-          <Route path="/profile/:id" element={session ? <Profile currentUser={session.user} /> : <Navigate to="/login" />} />
-        </Routes>
+        <AnimatedRoutes session={session} />
         <AutoUpdater />
         <OnboardingModal session={session} />
       </Router>
