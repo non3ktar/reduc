@@ -122,14 +122,14 @@ export default function Turmas({ user }) {
   return (
     <div className="min-h-screen pb-20 md:pb-0 md:pt-20">
       {/* Navbar Desktop */}
-      <nav className="fixed top-0 w-full glass z-50 hidden md:block border-b border-slate-200 dark:border-slate-800">
+      <nav className="fixed top-0 w-full glass z-50 hidden md:block border-b border-slate-700/50">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold text-orange-500 hover:opacity-80 transition">Reduca</Link>
           <div className="flex items-center gap-6">
-            <Link to="/" className="text-slate-500 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors"><ArrowLeft size={24} /></Link>
-            <div className="flex items-center gap-3 ml-4 pl-4 border-l border-slate-200 dark:border-slate-700">
+            <Link to="/" className="text-slate-400 hover:text-orange-400 transition-colors"><ArrowLeft size={24} /></Link>
+            <div className="flex items-center gap-3 ml-4 pl-4 border-l border-slate-700/50">
               <ThemeToggle />
-              <div className="ml-2 pl-4 border-l border-slate-200 dark:border-slate-700 flex items-center">
+              <div className="ml-2 pl-4 border-l border-slate-700/50 flex items-center">
                 <AppDrawer />
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function Turmas({ user }) {
         <div className="space-y-6">
           {/* Navbar Mobile inline */}
           <div className="md:hidden flex justify-between items-center mb-6 glass-card p-4">
-             <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition text-slate-700 dark:text-slate-300">
+             <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition text-slate-300">
                 <ArrowLeft size={24} /> Voltar
              </Link>
              <div className="flex gap-2 items-center">
@@ -156,12 +156,12 @@ export default function Turmas({ user }) {
                LISTA DE TURMAS
                ========================================================================= */
             <>
-              <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/50 shadow-md dark:shadow-xl backdrop-blur-md">
+              <div className="glass-card p-6 flex justify-between items-center">
                 <div>
-                  <h1 className="text-2xl font-bold flex items-center gap-2 text-slate-800 dark:text-white">
+                  <h1 className="text-2xl font-bold flex items-center gap-2 text-slate-200">
                     <GraduationCap className="text-emerald-500" /> Minhas Turmas
                   </h1>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Gerencie seus alunos e atribua atividades.</p>
+                  <p className="text-slate-400 text-sm mt-1">Gerencie seus alunos e atribua atividades.</p>
                 </div>
                 <button 
                   onClick={() => setShowCreateModal(true)}
@@ -173,7 +173,7 @@ export default function Turmas({ user }) {
               </div>
 
               {turmas.length === 0 ? (
-                <div className="text-center text-slate-500 py-10 glass-card">
+                <div className="text-center text-slate-400 py-10 glass-card">
                   Você ainda não possui turmas. Crie uma para começar!
                 </div>
               ) : (
@@ -182,15 +182,15 @@ export default function Turmas({ user }) {
                     <div 
                       key={turma.id} 
                       onClick={() => setSelectedTurma(turma)}
-                      className="glass-card p-6 rounded-2xl hover:scale-[1.01] hover:border-emerald-500/50 transition-all cursor-pointer group flex items-center justify-between"
+                      className="glass-card p-6 hover:scale-[1.01] hover:border-emerald-500/50 transition-all cursor-pointer group flex items-center justify-between"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-xl">
+                        <div className="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center font-bold text-xl">
                           {turma.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 group-hover:text-emerald-500 transition-colors">{turma.name}</h3>
-                          <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-1">
+                          <h3 className="font-bold text-lg text-slate-200 group-hover:text-emerald-500 transition-colors">{turma.name}</h3>
+                          <p className="text-sm text-slate-400 flex items-center gap-1 mt-1">
                             <Users size={14} /> {turma.members.length} {turma.members.length === 1 ? 'membro' : 'membros'}
                           </p>
                         </div>
@@ -209,10 +209,10 @@ export default function Turmas({ user }) {
                ========================================================================= */
             <>
               {/* Header da Turma */}
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/50 shadow-md dark:shadow-xl backdrop-blur-md">
+              <div className="glass-card p-6">
                 <button 
                   onClick={() => setSelectedTurma(null)}
-                  className="flex items-center text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white mb-4 text-sm font-medium transition"
+                  className="flex items-center text-slate-400 hover:text-slate-200 mb-4 text-sm font-medium transition"
                 >
                   <ArrowLeft size={16} className="mr-1" /> Voltar para Minhas Turmas
                 </button>
@@ -223,30 +223,30 @@ export default function Turmas({ user }) {
                       {selectedTurma.name.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <h1 className="text-2xl font-bold text-slate-800 dark:text-white">{selectedTurma.name}</h1>
-                      <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{selectedTurma.members.length} {selectedTurma.members.length === 1 ? 'membro' : 'membros'} na turma</p>
+                      <h1 className="text-2xl font-bold text-slate-200">{selectedTurma.name}</h1>
+                      <p className="text-slate-400 text-sm mt-1">{selectedTurma.members.length} {selectedTurma.members.length === 1 ? 'membro' : 'membros'} na turma</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Área de Convite */}
-              <div className="glass-card p-6 rounded-2xl space-y-6">
-                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+              <div className="glass-card p-6 space-y-6">
+                <h3 className="font-bold text-slate-200 flex items-center gap-2">
                   <Users className="text-emerald-500" /> Adicionar Alunos
                 </h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Adicionar Manualmente */}
                   <div className="space-y-4">
-                    <label className="block text-sm font-bold text-slate-600 dark:text-slate-300">Adicionar 1 a 1</label>
+                    <label className="block text-sm font-bold text-slate-300">Adicionar 1 a 1</label>
                     <form onSubmit={handleAddManual} className="space-y-3">
                       <input 
                         type="text" 
                         placeholder="Nome do aluno (Obrigatório)" 
                         value={manualName}
                         onChange={(e) => setManualName(e.target.value)}
-                        className="glass-input w-full rounded-xl px-4 py-2 text-sm"
+                        className="glass-input w-full"
                         required
                       />
                       <input 
@@ -254,7 +254,7 @@ export default function Turmas({ user }) {
                         placeholder="E-mail do aluno (Opcional)" 
                         value={manualEmail}
                         onChange={(e) => setManualEmail(e.target.value)}
-                        className="glass-input w-full rounded-xl px-4 py-2 text-sm"
+                        className="glass-input w-full"
                       />
                       <button 
                         type="submit"
@@ -268,13 +268,13 @@ export default function Turmas({ user }) {
                   
                   {/* Importar via CSV */}
                   <div className="space-y-4">
-                    <label className="block text-sm font-bold text-slate-600 dark:text-slate-300">Importar lista (CSV)</label>
-                    <div className="bg-slate-50 dark:bg-slate-800/50 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-6 text-center flex flex-col items-center justify-center h-[140px]">
+                    <label className="block text-sm font-bold text-slate-300">Importar lista (CSV)</label>
+                    <div className="bg-slate-800/50 border-2 border-dashed border-slate-600/50 rounded-2xl p-6 text-center flex flex-col items-center justify-center h-[140px]">
                       <Upload className="text-slate-400 mb-2" size={28} />
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 max-w-[200px]">
-                        Arquivo CSV com colunas: <br/><span className="font-mono text-emerald-600 dark:text-emerald-400">Nome, Email</span>
+                      <p className="text-xs text-slate-400 mb-4 max-w-[200px]">
+                        Arquivo CSV com colunas: <br/><span className="font-mono text-emerald-500">Nome, Email</span>
                       </p>
-                      <label className="bg-slate-800 hover:bg-slate-900 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 px-4 py-2 rounded-xl font-bold transition cursor-pointer text-sm shadow-md">
+                      <label className="bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-xl font-bold transition cursor-pointer text-sm shadow-md">
                         Selecionar Arquivo
                         <input 
                           type="file" 
@@ -289,13 +289,13 @@ export default function Turmas({ user }) {
               </div>
 
               {/* Tabela de Membros */}
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="p-4 border-b border-slate-200 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-800/20">
-                  <h3 className="font-bold text-slate-800 dark:text-white">Membros da Turma</h3>
+              <div className="glass-card overflow-hidden">
+                <div className="p-4 border-b border-slate-700/50 bg-slate-800/30">
+                  <h3 className="font-bold text-slate-200">Membros da Turma</h3>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm whitespace-nowrap">
-                    <thead className="bg-slate-100 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400">
+                    <thead className="bg-slate-800/50 text-slate-400">
                       <tr>
                         <th className="px-6 py-3 font-semibold">Nome</th>
                         <th className="px-6 py-3 font-semibold">E-mail</th>
@@ -303,25 +303,25 @@ export default function Turmas({ user }) {
                         <th className="px-6 py-3 font-semibold w-16"></th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200 dark:divide-slate-800/50">
+                    <tbody className="divide-y divide-slate-700/50">
                       {selectedTurma.members.map((member) => (
-                        <tr key={member.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition group">
+                        <tr key={member.id} className="hover:bg-slate-800/30 transition group">
                           <td className="px-6 py-3 flex items-center gap-3">
                             {member.avatar ? (
-                              <img src={member.avatar} alt={member.name} className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 object-cover" />
+                              <img src={member.avatar} alt={member.name} className="w-8 h-8 rounded-full bg-slate-700 object-cover" />
                             ) : (
                               <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center font-bold text-white text-xs">
                                 {member.name.charAt(0).toUpperCase()}
                               </div>
                             )}
-                            <span className="font-medium text-slate-800 dark:text-slate-200">{member.name}</span>
+                            <span className="font-medium text-slate-200">{member.name}</span>
                           </td>
-                          <td className="px-6 py-3 text-slate-600 dark:text-slate-400">{member.email || '-'}</td>
-                          <td className="px-6 py-3 text-slate-700 dark:text-slate-300">
+                          <td className="px-6 py-3 text-slate-400">{member.email || '-'}</td>
+                          <td className="px-6 py-3 text-slate-300">
                             <span className={`px-2.5 py-1 rounded-lg text-xs font-medium ${
                               member.role === 'Admin da turma' 
-                                ? 'bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400' 
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                                ? 'bg-orange-500/20 text-orange-400' 
+                                : 'bg-slate-800 text-slate-400'
                             }`}>
                               {member.role}
                             </span>
@@ -355,29 +355,29 @@ export default function Turmas({ user }) {
       {/* Modal Criar Turma */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-          <div className="glass-card max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700/50 rounded-2xl">
-            <h2 className="text-xl font-bold mb-4 text-slate-900 dark:text-white flex items-center gap-2">
+          <div className="glass-card max-w-md w-full p-6 shadow-2xl">
+            <h2 className="text-xl font-bold mb-4 text-slate-200 flex items-center gap-2">
               <GraduationCap className="text-emerald-500" /> Criar Nova Turma
             </h2>
             <form onSubmit={handleCreateTurma} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Nome da Turma</label>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Nome da Turma</label>
                 <input 
                   type="text" 
                   value={newTurmaName}
                   onChange={e => setNewTurmaName(e.target.value)}
-                  className="glass-input w-full rounded-xl px-4 py-2.5"
+                  className="glass-input w-full"
                   placeholder="Ex: Geografia 8º C"
                   required
                 />
-                <p className="text-xs text-slate-500 mt-2">Dê um nome para identificar rapidamente a sua turma e organizar seus alunos.</p>
+                <p className="text-xs text-slate-400 mt-2">Dê um nome para identificar rapidamente a sua turma e organizar seus alunos.</p>
               </div>
               
               <div className="flex gap-3 pt-4">
                 <button 
                   type="button" 
                   onClick={() => setShowCreateModal(false)}
-                  className="flex-1 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl transition font-bold"
+                  className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition font-bold"
                 >
                   Cancelar
                 </button>
