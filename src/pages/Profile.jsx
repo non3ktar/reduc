@@ -197,20 +197,6 @@ export default function Profile({ currentUser }) {
                 <Link to="/jogoforca" title="Forca" className="text-slate-400 hover:text-orange-500 hover:scale-110 transition-all"><Gamepad2 size={18} /></Link>
                 <Link to="/males" title="Malês" className="text-slate-400 hover:text-orange-500 hover:scale-110 transition-all"><Swords size={18} /></Link>
               </div>
-
-              {!isOwnProfile && (
-                <button 
-                  onClick={handleFollowToggle}
-                  disabled={followLoading}
-                  className={`px-5 py-1.5 text-sm rounded-full font-bold transition shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${
-                    isFollowing 
-                      ? 'bg-slate-200 dark:bg-slate-700 hover:bg-red-500 hover:border-red-500 hover:text-white text-slate-800 dark:text-white shadow-none border border-slate-300 dark:border-transparent'
-                      : 'bg-orange-600 hover:bg-orange-500 text-white shadow-md shadow-orange-500/20 border border-transparent'
-                  }`}
-                >
-                  {isFollowing ? 'Seguindo' : 'Seguir'}
-                </button>
-              )}
             </div>
           </div>
           
@@ -271,6 +257,23 @@ export default function Profile({ currentUser }) {
                </div>
             </div>
           </div>
+          
+          {!isOwnProfile && (
+            <div className="mb-6 max-w-sm">
+              <button 
+                onClick={handleFollowToggle}
+                disabled={followLoading}
+                className={`w-full px-5 py-3 text-sm rounded-xl font-bold transition disabled:opacity-50 disabled:cursor-not-allowed ${
+                  isFollowing 
+                    ? 'bg-slate-200 dark:bg-slate-700 hover:bg-red-500 hover:border-red-500 hover:text-white text-slate-800 dark:text-white shadow-none border border-slate-300 dark:border-transparent'
+                    : 'bg-orange-600 hover:bg-orange-500 text-white shadow-md shadow-orange-500/20 border border-transparent'
+                }`}
+              >
+                {isFollowing ? 'Seguindo' : 'Seguir Perfil'}
+              </button>
+            </div>
+          )}
+
           
           {profileUser.bio && (
             <div className="text-slate-300 bg-slate-900/50 p-4 rounded-xl border border-slate-700/50 leading-relaxed text-sm">
