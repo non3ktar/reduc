@@ -16,6 +16,7 @@ import Forum from './pages/Forum';
 import ForumTopic from './pages/ForumTopic';
 import Correio from './pages/Correio';
 import JogoForca from './pages/JogoForca';
+import VisualNovelMales from './pages/VisualNovelMales';
 import ScrollToTop from './components/ScrollToTop';
 import AutoUpdater from './components/AutoUpdater';
 import OnboardingModal from './components/OnboardingModal';
@@ -63,6 +64,7 @@ function AnimatedRoutes({ session }) {
           <Route path="/forum/:id" element={<PageTransition>{session ? <ForumTopic user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
           <Route path="/correio" element={<PageTransition>{session ? <Correio user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
           <Route path="/jogoforca" element={<PageTransition>{session ? <JogoForca /> : <Navigate to="/login" />}</PageTransition>} />
+          <Route path="/males" element={<PageTransition>{session ? <VisualNovelMales /> : <Navigate to="/login" />}</PageTransition>} />
           <Route path="/profile" element={<PageTransition>{session ? <Profile currentUser={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
           <Route path="/profile/:id" element={<PageTransition>{session ? <Profile currentUser={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
       </Routes>
