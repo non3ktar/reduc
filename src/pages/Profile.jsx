@@ -185,7 +185,7 @@ export default function Profile({ currentUser }) {
               className="w-32 h-32 rounded-full border-4 border-slate-100 dark:border-slate-900 object-cover bg-slate-200 dark:bg-slate-800 shadow-xl" 
             />
             
-            <div className="flex items-center gap-4 w-full sm:w-auto overflow-x-auto no-scrollbar pb-2 sm:pb-0 mb-2">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 w-full sm:w-auto pb-2 sm:pb-0 mb-2">
               {/* Atalhos Rápidos Simples */}
               <div className="flex items-center gap-3 sm:gap-4 px-2">
                 <Link to="/" title="Home" className="text-slate-400 hover:text-orange-500 hover:scale-110 transition-all"><Home size={18} /></Link>
@@ -202,7 +202,7 @@ export default function Profile({ currentUser }) {
                 <button 
                   onClick={handleFollowToggle}
                   disabled={followLoading}
-                  className={`px-8 py-2.5 rounded-full font-bold shadow-lg transition shrink-0 ${
+                  className={`px-4 py-1.5 text-sm rounded-full font-bold shadow-md transition shrink-0 ${
                     isFollowing 
                       ? 'bg-slate-700 hover:bg-red-500 hover:text-white text-white shadow-slate-900/20'
                       : 'bg-orange-600 hover:bg-orange-500 text-white shadow-orange-500/20'
