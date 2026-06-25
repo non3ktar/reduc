@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
-import { ArrowLeft, Edit3, MapPin, Briefcase, Calendar, X, BadgeCheck, Trophy, MessageSquare, Heart } from 'lucide-react';
+import { ArrowLeft, Edit3, MapPin, Briefcase, Calendar, X, BadgeCheck, Trophy, MessageSquare, Heart, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from '../components/ThemeToggle';
 import Post from '../components/Post';
@@ -25,6 +25,7 @@ export default function Profile({ currentUser }) {
   const [editRole, setEditRole] = useState('');
   const [editCover, setEditCover] = useState('default');
   const [editBio, setEditBio] = useState('');
+  const [editReducaEmail, setEditReducaEmail] = useState('');
   const [editHideBirthdate, setEditHideBirthdate] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(true);
@@ -85,6 +86,7 @@ export default function Profile({ currentUser }) {
       setEditRole(profileUser.role || '');
       setEditCover(profileUser.cover_image || 'default');
       setEditBio(profileUser.bio || '');
+      setEditReducaEmail(profileUser.reduca_email || '');
       setEditHideBirthdate(profileUser.hide_birthdate || false);
       setIsEditing(true);
     }
@@ -93,7 +95,13 @@ export default function Profile({ currentUser }) {
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     if (!editName.trim() || !editAvatar.trim()) return;
-    await supabase.from('profiles').update({
+
+    let finalReducaEmail = editReducaEmail.trim().toLowerCase();
+    if (finalReducaEmail && !finalReducaEmail.endsWith('@reduca.net')) {
+      finalReducaEmail = `${finalReducaEmail.replace(/[^a-z0-9_]/g, '')}@reduca.net`;
+    }
+
+    const { error } = await supabase.from('profiles').update({
       name: editName,
       avatar: editAvatar,
       birth_date: editBirthDate || null,
@@ -101,8 +109,19 @@ export default function Profile({ currentUser }) {
       role: editRole || null,
       cover_image: editCover,
       bio: editBio || null,
+      reduca_email: finalReducaEmail || null,
       hide_birthdate: editHideBirthdate
     }).eq('id', targetId);
+
+    if (error) {
+      if (error.code === '23505') {
+        alert('Este E-mail Reduca já está sendo usado por outra pessoa. Escolha outro nome.');
+        return;
+      }
+      alert('Erro ao salvar perfil: ' + error.message);
+      return;
+    }
+
     setProfileUser(prev => ({ 
       ...prev, 
       name: editName, 
@@ -112,6 +131,7 @@ export default function Profile({ currentUser }) {
       role: editRole, 
       cover_image: editCover,
       bio: editBio,
+      reduca_email: finalReducaEmail || null,
       hide_birthdate: editHideBirthdate
     }));
     setIsEditing(false);
@@ -190,6 +210,11 @@ export default function Profile({ currentUser }) {
               ) : (
                 <span className="flex items-center gap-2"><Calendar size={16} className="text-orange-500"/> Desde 2026</span>
               )
+            )}
+            {profileUser.reduca_email && (
+              <span className="flex items-center gap-2 font-medium text-orange-400 border border-orange-500/20 bg-orange-500/10 px-2 py-1 rounded-lg">
+                <Mail size={16} className="text-orange-500"/> {profileUser.reduca_email}
+              </span>
             )}
           </div>
 
@@ -287,6 +312,19 @@ export default function Profile({ currentUser }) {
                 <div>
                   <label className="block text-xs text-slate-400 mb-1 uppercase font-bold tracking-wide">Biografia</label>
                   <textarea value={editBio} onChange={e => setEditBio(e.target.value)} placeholder="Conte um pouco sobre você..." className="glass-input w-full min-h-[80px] resize-y" />
+                </div>
+                
+                <div className="bg-orange-500/10 border border-orange-500/30 p-4 rounded-xl mt-4 mb-4">
+                  <label className="flex items-center gap-2 text-xs text-orange-500 mb-1 uppercase font-bold tracking-wide">
+                    <Mail size={14} /> Correio Interno Reduca
+                  </label>
+                  <p className="text-xs text-slate-400 mb-3 leading-relaxed">
+                    Crie ou edite o seu endereço oficial (ex: prof.joao). Isso permite que você troque mensagens de forma privada com qualquer membro pela página de <b>Correio</b>!
+                  </p>
+                  <div className="flex items-stretch">
+                    <input type="text" value={editReducaEmail ? editReducaEmail.replace('@reduca.net', '') : ''} onChange={e => setEditReducaEmail(e.target.value)} placeholder="seunome" className="glass-input w-full rounded-r-none focus:ring-0 focus:border-orange-500" />
+                    <span className="bg-slate-800 border border-l-0 border-white/20 text-slate-400 rounded-r-xl px-4 flex items-center text-sm font-medium">@reduca.net</span>
+                  </div>
                 </div>
                 
                 <div>

@@ -14,6 +14,7 @@ import GroupDetail from './pages/GroupDetail';
 import Escambo from './pages/Escambo';
 import Forum from './pages/Forum';
 import ForumTopic from './pages/ForumTopic';
+import Correio from './pages/Correio';
 import ScrollToTop from './components/ScrollToTop';
 import AutoUpdater from './components/AutoUpdater';
 import OnboardingModal from './components/OnboardingModal';
@@ -21,6 +22,8 @@ import { supabase } from './supabase';
 import { usePushNotifications } from './hooks/usePushNotifications';
 import { Capacitor } from '@capacitor/core';
 import { motion, AnimatePresence } from 'framer-motion';
+
+import GlobalMailNotifier from './components/GlobalMailNotifier';
 
 const PageTransition = ({ children }) => {
   return (
@@ -57,6 +60,7 @@ function AnimatedRoutes({ session }) {
           <Route path="/escambo" element={<PageTransition>{session ? <Escambo user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
           <Route path="/forum" element={<PageTransition>{session ? <Forum user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
           <Route path="/forum/:id" element={<PageTransition>{session ? <ForumTopic user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
+          <Route path="/correio" element={<PageTransition>{session ? <Correio user={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
           <Route path="/profile" element={<PageTransition>{session ? <Profile currentUser={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
           <Route path="/profile/:id" element={<PageTransition>{session ? <Profile currentUser={session.user} /> : <Navigate to="/login" />}</PageTransition>} />
       </Routes>
@@ -105,6 +109,7 @@ export default function App() {
         <AnimatedRoutes session={session} />
         <AutoUpdater />
         <OnboardingModal session={session} />
+        {session && <GlobalMailNotifier user={session.user} />}
       </Router>
     </div>
   );

@@ -98,7 +98,7 @@ export default function Sidebar({ currentUser, className = 'hidden md:block' }) 
               href="https://reduca.zonaeducacional.org/reduca-latest.apk" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-bold text-white bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg transition-colors border border-slate-700/50"
+              className="inline-flex items-center gap-2 text-xs font-bold text-slate-50 bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg transition-colors border border-slate-700/50"
             >
               <Download size={14} className="text-orange-500" />
               Baixar APK
@@ -112,7 +112,7 @@ export default function Sidebar({ currentUser, className = 'hidden md:block' }) 
         <p className="text-xs text-slate-400 mb-4">Adicione ou remova widgets do seu painel lateral.</p>
         {isAdmin && (
           <>
-            <button onClick={() => navigate('/marketplace')} className="w-full bg-slate-800/80 hover:bg-slate-700 text-center text-slate-300 hover:text-white px-4 py-2 rounded-xl transition block border border-slate-600/50 shadow-lg mb-3">
+            <button onClick={() => navigate('/marketplace')} className="w-full bg-slate-800/80 hover:bg-slate-700 text-center text-slate-300 hover:text-slate-50 px-4 py-2 rounded-xl transition block border border-slate-600/50 shadow-lg mb-3">
               Gerenciar Widgets
             </button>
             <button onClick={() => navigate('/admin')} className="w-full bg-red-900/20 hover:bg-red-900/40 text-center text-red-400 hover:text-red-300 px-4 py-2 rounded-xl transition block border border-red-900/50 shadow-lg">
