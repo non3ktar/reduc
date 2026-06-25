@@ -27,6 +27,7 @@ export default function Profile({ currentUser }) {
   const [editBio, setEditBio] = useState('');
   const [editReducaEmail, setEditReducaEmail] = useState('');
   const [editHideBirthdate, setEditHideBirthdate] = useState(false);
+  const [editCellphone, setEditCellphone] = useState('');
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(true);
 
@@ -88,6 +89,7 @@ export default function Profile({ currentUser }) {
       setEditBio(profileUser.bio || '');
       setEditReducaEmail(profileUser.reduca_email || '');
       setEditHideBirthdate(profileUser.hide_birthdate || false);
+      setEditCellphone(profileUser.cellphone || '');
       setIsEditing(true);
     }
   };
@@ -110,7 +112,8 @@ export default function Profile({ currentUser }) {
       cover_image: editCover,
       bio: editBio || null,
       reduca_email: finalReducaEmail || null,
-      hide_birthdate: editHideBirthdate
+      hide_birthdate: editHideBirthdate,
+      cellphone: editCellphone || null
     }).eq('id', targetId);
 
     if (error) {
@@ -132,7 +135,8 @@ export default function Profile({ currentUser }) {
       cover_image: editCover,
       bio: editBio,
       reduca_email: finalReducaEmail || null,
-      hide_birthdate: editHideBirthdate
+      hide_birthdate: editHideBirthdate,
+      cellphone: editCellphone || null
     }));
     setIsEditing(false);
   };
@@ -214,6 +218,11 @@ export default function Profile({ currentUser }) {
             {profileUser.reduca_email && (
               <span className="flex items-center gap-2 font-medium text-orange-400 border border-orange-500/20 bg-orange-500/10 px-2 py-1 rounded-lg">
                 <Mail size={16} className="text-orange-500"/> {profileUser.reduca_email}
+              </span>
+            )}
+            {profileUser.cellphone && (
+              <span className="flex items-center gap-2 text-slate-300">
+                <span className="text-orange-500 font-bold text-xs uppercase tracking-wider">Cel:</span> {profileUser.cellphone}
               </span>
             )}
           </div>
@@ -304,6 +313,10 @@ export default function Profile({ currentUser }) {
                 <div>
                   <label className="block text-xs text-slate-400 mb-1 uppercase font-bold tracking-wide">Localidade (Cidade/Estado)</label>
                   <input type="text" value={editLocation} onChange={e => setEditLocation(e.target.value)} placeholder="Ex: Salinas da Margarida, BA" className="glass-input w-full" />
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-400 mb-1 uppercase font-bold tracking-wide">Celular / WhatsApp</label>
+                  <input type="tel" value={editCellphone} onChange={e => setEditCellphone(e.target.value)} placeholder="Ex: (75) 99999-9999" className="glass-input w-full" />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1 uppercase font-bold tracking-wide">Cargo / Título</label>

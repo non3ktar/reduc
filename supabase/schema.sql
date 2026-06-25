@@ -12,7 +12,9 @@ create table public.profiles (
   favorite_articles uuid[] default '{}'::uuid[],
   cover_image text default 'default',
   bio text,
-  hide_birthdate boolean default false
+  hide_birthdate boolean default false,
+  reduca_email text,
+  cellphone text
 );
 
 create table public.forum_topics (
