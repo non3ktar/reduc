@@ -16,7 +16,7 @@ const STORY = {
   "scene_1": {
     background: "/images/males_rua_noite.png",
     character: "Pensamento",
-    text: "As ruas da Cidade Baixa estão abafadas. Sou apenas um jovem escravizado de ganho aos olhos deles, mas secretamente sei ler e escrever em árabe. No meu bolso, levo um bilhete vital para amanhã...",
+    text: "As ruas da Cidade Baixa estão abafadas. Sou um jovem de ganho aos olhos deles, mas secretamente sei ler e escrever em árabe. No meu bolso, levo os planos para o levante...",
     choices: [
       { text: "Ler o bilhete de novo", next: "read_note" },
       { text: "Apressar o passo", next: "guards_appear" }
@@ -25,7 +25,7 @@ const STORY = {
   "read_note": {
     background: "/images/males_rua_noite.png",
     character: "Bilhete (em árabe)",
-    text: "\"Amanhã, nas primeiras horas da manhã, nos levantaremos por nossa liberdade. Juntem-se a nós em nome de Alá.\" ...A revolta vai libertar Pacífico Licutan, que está preso no subsolo da Câmara Municipal.",
+    text: "\"Amanhã, nas primeiras horas da manhã, nos levantaremos por nossa liberdade. Juntem-se a nós em nome de Alá.\" ...A revolta vai libertar nosso líder Pacífico Licutan.",
     choices: [
       { text: "Guardar o bilhete e seguir", next: "guards_appear" }
     ]
@@ -43,54 +43,102 @@ const STORY = {
   "bribe_guard": {
     background: "/images/males_guarda.png",
     character: "Guarda Imperial",
-    text: "(Ele pega as moedas do seu ganho de hoje, olha para os lados e guarda no bolso). \"Suma daqui antes que eu mude de ideia. E não quero ver sua cara nas ruas hoje!\"",
+    text: "(Ele pega as moedas do seu ganho, olha para os lados e guarda). \"Suma daqui antes que eu mude de ideia. E não quero ver sua cara nas ruas!\"",
     choices: [
       { text: "Fugir para o esconderijo", next: "basement_meeting" }
     ]
   },
   "swallow_note": {
     background: "/images/males_guarda.png",
-    character: "Guarda Imperial",
-    text: "Você tosse e se engasga engolindo o papel. O guarda te revista de forma bruta, mas não encontra provas. Ele te dá um empurrão: \"Volte para a senzala do seu senhor, agora!\"",
-    choices: [
-      { text: "Voltar sem entregar a mensagem (Fim)", next: "end_bad" }
-    ]
+    character: "Fim da Linha",
+    text: "O guarda te revista brutalmente, mas não encontra provas. Ele te manda de volta para a senzala. Você sobreviveu, mas a revolta perdeu comunicação vital.",
+    isEnd: true,
+    success: false
   },
   "run_away": {
     background: "/images/males_rua_noite.png",
     character: "Narrador",
-    text: "Você vira as costas e corre com os pés descalços batendo nas pedras. O guarda grita, mas logo desiste de entrar nos becos escuros do Pelourinho. Você está a salvo... por enquanto.",
+    text: "Você corre com os pés descalços batendo nas pedras. O guarda grita, mas desiste de entrar nos becos escuros do Pelourinho.",
     choices: [
       { text: "Ir para a reunião secreta", next: "basement_meeting" }
     ]
   },
   "basement_meeting": {
     background: "/images/males_porao_reuniao.png",
-    character: "Ahuna",
-    text: "Você chegou! Tivemos medo de que tivesse sido capturado. A cidade tem mais de 65 mil habitantes, mas os soldados imperiais parecem estar em todo lugar hoje.",
-    choices: [
-      { text: "Entregar a mensagem sobre o ataque à Câmara", next: "plan_attack" }
-    ]
-  },
-  "plan_attack": {
-    background: "/images/males_porao_reuniao.png",
     character: "Líder Malê",
-    text: "Vamos resgatar o idoso Pacífico Licutan (Bilal), um dos nossos líderes mais estimados. Ele não foi preso por rebeldia, mas por dívidas do seu senhor. Libertá-lo será nosso primeiro grande ato!",
+    text: "Ainda bem que chegou! Vista seu abadá branco. O plano é atacar de manhã... mas espere. Ouvimos passos lá fora!",
     choices: [
-      { text: "Vestir o abadá branco e preparar-se", next: "end_good" }
+      { text: "Olhar pela fresta da porta", next: "betrayal" }
     ]
   },
-  "end_bad": {
+  "betrayal": {
+    background: "/images/males_porao_reuniao.png",
+    character: "Ahuna",
+    text: "Fomos denunciados! Uma patrulha de soldados chegou à nossa casa aqui na Ladeira da Praça. Eles estão forçando a porta para entrar!",
+    choices: [
+      { text: "Pegar uma espada e surpreendê-los", next: "fight_patrol" },
+      { text: "Fugir pela janela dos fundos", next: "coward_end" }
+    ]
+  },
+  "coward_end": {
     background: "/images/males_rua_noite.png",
     character: "Fim da Linha",
-    text: "Você sobreviveu à noite, mas a revolta perdeu comunicação vital. A História Esquecida lembra daqueles que lutaram, mesmo quando as circunstâncias foram impossíveis.",
+    text: "Você foge no escuro, abandonando seus irmãos. O levante acontece sem você. Sua vida continua nas sombras do medo.",
     isEnd: true,
     success: false
   },
-  "end_good": {
-    background: "/images/males_porao_reuniao.png",
-    character: "O Início da Revolta",
-    text: "Você veste o abadá branco e recebe um amuleto protetor. A Revolta dos Malês, um dos maiores levantes urbanos pela liberdade no Brasil, está prestes a começar.",
+  "fight_patrol": {
+    background: "/images/males_batalha_praca.png",
+    character: "Narrador",
+    text: "Sessenta guerreiros africanos saem de repente, surpreendendo os soldados! Uma pequena batalha acontece na ladeira da Praça.",
+    choices: [
+      { text: "Marchar para a Câmara Municipal", next: "camara_attack" }
+    ]
+  },
+  "camara_attack": {
+    background: "/images/males_camara.png",
+    character: "Narrador",
+    text: "Vocês chegam à Câmara Municipal para resgatar Pacífico Licutan (Bilal), preso no subsolo por dívidas de seu senhor. Mas somos recebidos por fogo cruzado!",
+    choices: [
+      { text: "Tentar invadir a prisão sob os tiros", next: "camara_fail" }
+    ]
+  },
+  "camara_fail": {
+    background: "/images/males_camara.png",
+    character: "Ahuna",
+    text: "O ataque falhou! A guarda do palácio do governo reforçou os carcereiros. Precisamos acordar a cidade e juntar forças!",
+    choices: [
+      { text: "Correr pelas ruas chamando os escravos", next: "rally_slaves" }
+    ]
+  },
+  "rally_slaves": {
+    background: "/images/males_batalha_praca.png",
+    character: "Narrador",
+    text: "Aos gritos de liberdade, vocês correm pela Vitória, Campo Grande e enfrentam fogo cerrado em frente ao Forte de São Pedro, recuando pelas Mercês.",
+    choices: [
+      { text: "Lutar no Terreiro de Jesus", next: "cidade_baixa" }
+    ]
+  },
+  "cidade_baixa": {
+    background: "/images/males_rua_noite.png",
+    character: "Guerreiro Nagô",
+    text: "Descemos o Pelourinho e o Taboão! Estamos na Cidade Baixa. Precisamos seguir para o Cabrito para encontrar os escravos de engenho!",
+    choices: [
+      { text: "Avançar para Água de Meninos", next: "agua_de_meninos" }
+    ]
+  },
+  "agua_de_meninos": {
+    background: "/images/males_agua_meninos.png",
+    character: "Narrador",
+    text: "No amanhecer perto do mar, a cavalaria imperial bloqueia o caminho no quartel de Água de Meninos. É a batalha final. Muitos tentam fugir a nado...",
+    choices: [
+      { text: "Lutar até o fim pela liberdade", next: "final_historical" }
+    ]
+  },
+  "final_historical": {
+    background: "/images/males_agua_meninos.png",
+    character: "O Legado",
+    text: "Mais de 70 rebeldes caíram e a revolta foi vencida nas ruas. Mas o medo de um novo levante se instalou no Império, marcando para sempre a força da resistência negra no Brasil.",
     isEnd: true,
     success: true
   }
